@@ -1,0 +1,127 @@
+{
+  "species": [
+    {
+      "id": "sp-dog",
+      "name": "Cachorro",
+      "slug": "cachorro"
+    },
+    {
+      "id": "sp-cat",
+      "name": "Gato",
+      "slug": "gato"
+    }
+  ],
+  "breeds": [
+    {
+      "id": "br-srd-dog",
+      "name": "Sem raca definida",
+      "speciesId": "sp-dog"
+    },
+    {
+      "id": "br-srd-cat",
+      "name": "Sem raca definida",
+      "speciesId": "sp-cat"
+    },
+    {
+      "id": "br-samoyed",
+      "name": "Samoieda",
+      "speciesId": "sp-dog"
+    },
+    {
+      "id": "br-siamese",
+      "name": "Siames",
+      "speciesId": "sp-cat"
+    }
+  ],
+  "sizes": [
+    {
+      "id": "sz-small",
+      "name": "Pequeno",
+      "slug": "pequeno"
+    },
+    {
+      "id": "sz-medium",
+      "name": "Medio",
+      "slug": "medio"
+    },
+    {
+      "id": "sz-large",
+      "name": "Grande",
+      "slug": "grande"
+    }
+  ],
+  "animals": [
+    {
+      "id": "an-theo",
+      "name": "Theo",
+      "speciesId": "sp-dog",
+      "breedId": "br-samoyed",
+      "sizeId": "sz-medium",
+      "ageMonths": 24,
+      "sex": "Macho",
+      "city": "Campo Magro",
+      "state": "PR",
+      "description": "Cao alegre, sociavel e pronto para uma familia que goste de passeios.",
+      "status": "available",
+      "imageUrl": "https://images.unsplash.com/photo-1517423440428-a5a00ad493e8?auto=format&fit=crop&w=900&q=80",
+      "createdAt": "2026-05-24T00:00:00.000Z"
+    },
+    {
+      "id": "an-luna",
+      "name": "Luna",
+      "speciesId": "sp-cat",
+      "breedId": "br-siamese",
+      "sizeId": "sz-small",
+      "ageMonths": 14,
+      "sex": "Femea",
+      "city": "Curitiba",
+      "state": "PR",
+      "description": "Gata calma, carinhosa e adaptada a ambientes internos.",
+      "status": "in_process",
+      "imageUrl": "https://images.unsplash.com/photo-1518791841217-8f162f1e1131?auto=format&fit=crop&w=900&q=80",
+      "createdAt": "2026-05-24T00:00:00.000Z"
+    },
+    {
+      "id": "an-bento",
+      "name": "Bento",
+      "speciesId": "sp-dog",
+      "breedId": "br-srd-dog",
+      "sizeId": "sz-large",
+      "ageMonths": 36,
+      "sex": "Macho",
+      "city": "Sao Jose dos Pinhais",
+      "state": "PR",
+      "description": "Cao protetor, brincalhao e indicado para casa com espaco.",
+      "status": "available",
+      "imageUrl": "https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=900&q=80",
+      "createdAt": "2026-05-24T00:00:00.000Z"
+    },
+    {
+      "id": "an-mel",
+      "name": "Mel",
+      "speciesId": "sp-cat",
+      "breedId": "br-srd-cat",
+      "sizeId": "sz-small",
+      "ageMonths": 8,
+      "sex": "Femea",
+      "city": "Pinhais",
+      "state": "PR",
+      "description": "Filhote curiosa, ativa e em busca de um lar seguro.",
+      "status": "adopted",
+      "imageUrl": "https://images.unsplash.com/photo-1574158622682-e40e69881006?auto=format&fit=crop&w=900&q=80",
+      "createdAt": "2026-05-24T00:00:00.000Z"
+    }
+  ],
+  "adoptionRequests": [
+    {
+      "id": "req-demo",
+      "animalId": "an-theo",
+      "adopterName": "Maria Silva",
+      "email": "maria@example.com",
+      "phone": "(41) 99999-0000",
+      "message": "Tenho interesse em conhecer o Theo e entender os proximos passos.",
+      "status": "received",
+      "createdAt": "2026-05-24T00:00:00.000Z"
+    }
+  ]
+}
