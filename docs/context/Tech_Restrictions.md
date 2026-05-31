@@ -76,12 +76,14 @@ Caso o produto registre solicitacoes ou manifestacoes de interesse, devem ser co
 - uma solicitacao nao deve concluir automaticamente uma adocao sem regra da organizacao;
 - solicitacoes para animais adotados devem ser bloqueadas ou claramente impedidas;
 - etapas da solicitacao devem usar valores padronizados, caso esse controle exista.
+- O schema do Supabase reforca essa regra com trigger para impedir solicitacoes de animais adotados e atualizar animal disponivel para `in_process` apos uma nova solicitacao.
 
 ## Validacao no Front-end e Back-end
 
 - Front-end usa campos obrigatorios, tipos de input e estados de interface para reduzir entradas incorretas.
 - Back-end/API e Server Actions validam dados com Zod antes de gravar.
-- Persistencia JSON deve ser tratada como recurso local, nao como banco transacional de producao.
+- Supabase deve ser usado com `SUPABASE_SERVICE_ROLE_KEY` apenas no servidor para operacoes administrativas.
+- Chaves sensiveis nao devem ser expostas em componentes client-side.
 
 ## Cuidados com Erros
 
@@ -92,10 +94,11 @@ Caso o produto registre solicitacoes ou manifestacoes de interesse, devem ser co
 
 ## Limitacoes Atuais Identificadas
 
-- A persistencia atual e um arquivo JSON local, sem controle transacional ou concorrencia robusta.
+- Supabase e a fonte unica de dados e depende de credenciais reais e execucao de `supabase/schema.sql` e `supabase/seed.sql`.
+- As operacoes administrativas no Supabase usam chamadas granulares, mas dependem de `SUPABASE_SERVICE_ROLE_KEY`.
 - A autenticacao administrativa e simples e adequada apenas para ambiente local/didatico.
 - Imagens usam URL externa; upload de imagem ainda nao foi implementado.
 - Testes automatizados ainda nao foram implementados.
-- Supabase aparece como referencia do video, mas nao esta configurado sem credenciais.
+- Makuco nao foi inicializado porque o pacote externo retornou `403 Forbidden`.
 
 Essas limitacoes devem ser revistas antes de publicar o produto em ambiente de producao.

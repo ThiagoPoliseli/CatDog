@@ -62,4 +62,4 @@ O CatDog tem como escopo principal permitir a divulgacao e consulta de animais d
 
 ## Observacao Sobre o Repositorio Atual
 
-O repositorio agora possui uma implementacao local em Next.js com catalogo publico, filtros, solicitacao de adocao e area administrativa para gerenciamento de animais, especies, racas, portes e solicitacoes. A persistencia atual e local em `data/catdog-db.json`.
+O repositorio agora possui uma implementacao em Next.js com catalogo publico, filtros, solicitacao de adocao e area administrativa para gerenciamento de animais, especies, racas, portes e solicitacoes. A persistencia atual usa Supabase como fonte unica de dados.

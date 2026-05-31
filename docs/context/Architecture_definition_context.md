@@ -2,9 +2,9 @@
 
 ## Visao Geral
 
-O CatDog funciona como uma aplicacao web Next.js com App Router. A arquitetura separa interface publica, area administrativa, rotas de API, validacoes e persistencia local em arquivo JSON.
+O CatDog funciona como uma aplicacao web Next.js com App Router. A arquitetura separa interface publica, area administrativa, rotas de API, validacoes e camada de persistencia.
 
-A implementacao atual foi criada para funcionar localmente sem depender de credenciais externas. O video da atividade mostra uma evolucao com servicos externos, como banco/servico gerenciado, mas neste repositorio a persistencia ativa esta em `data/catdog-db.json`.
+A implementacao atual usa Supabase como fonte de dados e depende de credenciais validas no arquivo `.env`.
 
 ## Separacao por Camadas
 
@@ -18,12 +18,12 @@ Implementado dentro do proprio Next.js por meio de Server Components, Server Act
 
 ### Persistencia
 
-Implementada localmente em `data/catdog-db.json`, acessada por funcoes de leitura e escrita em `src/lib/store.ts`. Essa escolha permite executar o projeto sem Supabase ou banco externo.
+Implementada por uma camada em `src/lib/store.ts`, que delega leitura e escrita para `src/lib/supabase-store.ts`. Os dados ficam nas tabelas do Supabase descritas em `supabase/schema.sql`.
 
 ## Fluxo de Dados Esperado
 
 1. A rota `/animais` carrega os dados via `listCatalog`.
-2. `src/lib/store.ts` le o arquivo `data/catdog-db.json`.
+2. `src/lib/store.ts` chama a camada Supabase para buscar especies, racas, portes, animais e solicitacoes.
 3. A interface exibe cards de animais e filtros client-side.
 4. O usuario envia uma solicitacao de adocao pela rota `/api/adoption-requests`.
 5. A API valida os dados com Zod e grava a solicitacao.
@@ -35,28 +35,31 @@ Implementada localmente em `data/catdog-db.json`, acessada por funcoes de leitur
 - `src/app/admin`: area administrativa.
 - `src/app/api/adoption-requests`: API para solicitacoes de adocao.
 - `src/components`: componentes reutilizaveis de catalogo e formularios.
-- `src/lib`: tipos, validacoes, autenticacao simples e persistencia.
-- `data/catdog-db.json`: dados locais da aplicacao.
+- `src/lib`: tipos, validacoes, autenticacao simples e persistencia Supabase.
+- `supabase/schema.sql`: schema do banco Supabase.
+- `supabase/seed.sql`: dados iniciais para Supabase.
 - `docs/context`: documentos de contexto do produto CatDog.
 
 ## Responsabilidades de Cada Camada
 
 - Interface: apresentar dados de forma clara, acessivel e consistente.
 - API e Server Actions: fornecer dados confiaveis, aplicar validacoes e executar mutacoes.
-- Persistencia: armazenar informacoes dos animais e solicitacoes no arquivo JSON local.
+- Persistencia: armazenar informacoes dos animais e solicitacoes no Supabase.
 - Documentacao: registrar decisoes, escopo, termos, restricoes e contexto de gestao para orientar o time.
 
 ## Observacoes Sobre Arquitetura Atual
 
 - A arquitetura atual e monolitica em Next.js, suficiente para a primeira versao local.
 - A autenticacao administrativa e simples, baseada em cookie e credenciais de ambiente.
-- O arquivo JSON local nao substitui banco de dados real em producao.
+- Supabase e a fonte unica de dados nesta versao; sem credenciais validas, a aplicacao nao carrega o catalogo.
+- O schema do Supabase inclui triggers para bloquear solicitacoes de animais adotados e mover animais disponiveis para `in_process` quando uma solicitacao e criada.
+- O init do Makuco foi mapeado em script, mas o pacote retornou `403 Forbidden` sem acesso autenticado.
 - A documentacao atual deve ser usada como base inicial, nao como substituto de uma Spec SDD.
-- No video da atividade aparecem ferramentas e uma implementacao de aula com servicos externos. Esses itens podem orientar evolucao, mas a versao atual do repositorio esta pronta para execucao local.
+- No video da atividade aparecem ferramentas e uma implementacao de aula com servicos externos. Esses itens orientaram a evolucao da versao atual com Supabase.
 
 ## Possiveis Evolucoes
 
-- Substituir persistencia JSON por Supabase ou outro banco real.
+- Revisar regras de Row Level Security antes de publicar em ambiente compartilhado.
 - Criar autenticacao robusta com provedor dedicado.
 - Adicionar testes automatizados para validacoes e fluxos principais.
 - Criar regras mais completas de transicao de status.

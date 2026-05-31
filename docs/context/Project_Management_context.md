@@ -39,7 +39,7 @@ Esta entrega nao inclui implementacao de features, criacao de Spec SDD ou altera
 
 ## Dependencias
 
-- Definicao se a versao final usara persistencia local, Supabase ou outro banco.
+- Projeto Supabase configurado e com schema/seed executados.
 - Definicao dos campos obrigatorios para cadastro ou exibicao.
 - Definicao dos status oficiais de adocao.
 - Definicao sobre existencia de solicitacao de adocao ou apenas contato externo.
@@ -59,7 +59,7 @@ Esta entrega nao inclui implementacao de features, criacao de Spec SDD ou altera
 
 ## Sugestao de Proximos Passos
 
-- Validar se a persistencia local atende a entrega ou se deve ser substituida por Supabase.
+- Validar policies, credenciais e dados iniciais do Supabase.
 - Confirmar campos obrigatorios do animal.
 - Confirmar status oficiais de adocao.
 - Confirmar se o fluxo de solicitacao de adocao visto no video faz parte da entrega atual.

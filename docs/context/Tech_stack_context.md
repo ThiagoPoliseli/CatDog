@@ -23,14 +23,15 @@ O repositorio agora possui uma aplicacao CatDog implementada com Next.js, React 
 
 ## Banco de Dados ou Persistencia
 
-- Persistencia local em `data/catdog-db.json`.
-- Nao ha banco relacional, ORM ou migrations nesta versao.
-- Supabase aparece como referencia no video e em `.env.example`, mas nao esta integrado porque nao ha credenciais no repositorio.
+- Supabase integrado como fonte unica de dados via `@supabase/supabase-js`.
+- Schema SQL em `supabase/schema.sql`.
+- Seed SQL em `supabase/seed.sql`.
+- Nao ha ORM nesta versao.
 
 ## Testes
 
 - Testes automatizados ainda nao foram implementados.
-- A verificacao atual e feita com `npm run lint`, `npm run build` e `npm audit`.
+- A verificacao atual e feita com `npm run lint`, `npm run typecheck`, `npm run build` e `npm audit`.
 
 ## Lint e Formatacao
 
@@ -47,6 +48,13 @@ Scripts definidos em `package.json`:
 - `npm run build`: gera build de producao.
 - `npm run start`: executa build de producao.
 - `npm run lint`: executa ESLint.
+- `npm run typecheck`: executa TypeScript sem gerar build.
+- `npm run verify`: executa lint, typecheck e build.
+- `npm run makuco:init`: executa o comando de init do Makuco quando o pacote estiver acessivel.
+
+## Qualidade e Analise Estatica
+
+- ESLint para qualidade de codigo.
 
 ## Versionamento
 
@@ -54,8 +62,8 @@ O projeto usa Git. No momento desta documentacao, o branch atual `master` ainda 
 
 ## Referencias Visuais do Video
 
-No video da atividade aparecem, em ambiente de aula, ferramentas e tecnologias como Node.js, VS Code, Makuco, Supabase, Next.js, React e Tailwind CSS. Nesta implementacao local foram confirmados Node.js, Next.js, React, TypeScript, ESLint e persistencia JSON. Supabase e Tailwind CSS permanecem como possiveis evolucoes, nao como dependencias ativas do repositorio.
+No video da atividade aparecem, em ambiente de aula, ferramentas e tecnologias como Node.js, VS Code, Makuco, Supabase, Next.js, React e Tailwind CSS. Nesta implementacao foram confirmados Node.js, Next.js, React, TypeScript, ESLint e Supabase como fonte de dados. Tailwind CSS nao e dependencia ativa do repositorio.
 
 ## Observacao Importante
 
-Esta documentacao deve ser atualizada se a persistencia JSON for substituida por Supabase ou outro banco real.
+Esta documentacao deve ser atualizada se forem adicionados testes automatizados, upload de imagens, autenticacao externa ou mudancas relevantes no schema do Supabase.
