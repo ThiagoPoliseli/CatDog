@@ -1,11 +1,27 @@
 import Image from "next/image";
 import { AnimalCatalog } from "@/components/AnimalCatalog";
 import { listCatalog } from "@/lib/store";
+import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
 
 export default async function AnimalsPage() {
-  const catalog = await listCatalog();
+  const [catalog, supabase] = await Promise.all([
+    listCatalog(),
+    createClient(),
+  ]);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const userProp = user
+    ? {
+        id: user.id,
+        email: user.email ?? "",
+        name: (user.user_metadata?.name as string) ?? "",
+      }
+    : null;
 
   return (
     <main className="page">
@@ -33,6 +49,7 @@ export default async function AnimalsPage() {
         breeds={catalog.breeds}
         sizes={catalog.sizes}
         species={catalog.species}
+        user={userProp}
       />
     </main>
   );

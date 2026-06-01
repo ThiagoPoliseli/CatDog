@@ -1,8 +1,21 @@
 import { NextResponse } from "next/server";
 import { createAdoptionRequest } from "@/lib/store";
 import { adoptionRequestSchema } from "@/lib/validation";
+import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return NextResponse.json(
+      { message: "Autenticacao necessaria." },
+      { status: 401 },
+    );
+  }
+
   const body = await request.json();
   const parsed = adoptionRequestSchema.safeParse(body);
 
@@ -14,7 +27,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    await createAdoptionRequest(parsed.data);
+    await createAdoptionRequest({ ...parsed.data, userId: user.id });
     return NextResponse.json({ message: "Solicitacao registrada." });
   } catch (error) {
     return NextResponse.json(

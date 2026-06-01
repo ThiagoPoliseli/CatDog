@@ -1,5 +1,16 @@
 import { listCatalog } from "@/lib/store";
 import { createSpeciesAction, deleteSpeciesAction } from "../actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -17,43 +28,43 @@ export default async function AdminSpeciesPage() {
 
       <section className="panel">
         <form action={createSpeciesAction} className="form-grid">
-          <label>
-            <span className="muted">Nome da especie</span>
-            <input className="field" name="name" required />
-          </label>
-          <button className="button" type="submit">
-            Adicionar
-          </button>
+          <div className="grid gap-1.5">
+            <Label htmlFor="species-name">Nome da especie</Label>
+            <Input id="species-name" name="name" required />
+          </div>
+          <div className="flex items-end">
+            <Button type="submit">Adicionar</Button>
+          </div>
         </form>
       </section>
 
       <section className="panel">
         <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Slug</th>
-                <th>Acoes</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Slug</TableHead>
+                <TableHead>Acoes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {catalog.species.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.slug}</td>
-                  <td>
+                <TableRow key={item.id}>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.slug}</TableCell>
+                  <TableCell>
                     <form action={deleteSpeciesAction}>
                       <input name="id" type="hidden" value={item.id} />
-                      <button className="button danger" type="submit">
+                      <Button variant="destructive" type="submit">
                         Remover
-                      </button>
+                      </Button>
                     </form>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </section>
     </>

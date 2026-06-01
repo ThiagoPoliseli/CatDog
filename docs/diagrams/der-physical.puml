@@ -1,0 +1,72 @@
+@startuml
+' DER - CatDog Platform - Physical Data Model
+
+title CatDog - Diagrama de Entidade-Relacionamento (DER)
+
+!theme cerulean
+
+skinparam entity {
+  BackgroundColor #DDEEFF
+  BorderColor #2E6DA4
+  FontColor #1A1A1A
+}
+
+skinparam linetype ortho
+
+entity SPECIES {
+  *ID_SPECIES : TEXT <<PK>>
+  --
+  NM_SPECIES : TEXT
+  CD_SLUG : TEXT <<unique>>
+}
+
+entity SIZE {
+  *ID_SIZE : TEXT <<PK>>
+  --
+  NM_SIZE : TEXT
+  CD_SLUG : TEXT <<unique>>
+}
+
+entity BREED {
+  *ID_BREED : TEXT <<PK>>
+  --
+  NM_BREED : TEXT
+  #ID_SPECIES : TEXT <<FK>>
+}
+
+entity ANIMAL {
+  *ID_ANIMAL : TEXT <<PK>>
+  --
+  NM_ANIMAL : TEXT
+  #ID_SPECIES : TEXT <<FK>>
+  #ID_BREED : TEXT <<FK>>
+  #ID_SIZE : TEXT <<FK>>
+  QT_AGE_MONTHS : INT
+  TP_SEX : TEXT
+  NM_CITY : TEXT
+  NM_STATE : TEXT
+  DS_DESCRIPTION : TEXT
+  TP_STATUS : TEXT
+  NM_IMAGE_URL : TEXT
+  DTH_CREATED_AT : TIMESTAMP
+}
+
+entity ADOPTION_REQUEST {
+  *ID_ADOPTION_REQUEST : TEXT <<PK>>
+  --
+  #ID_ANIMAL : TEXT <<FK>>
+  NM_ADOPTER : TEXT
+  NM_EMAIL : TEXT
+  NM_PHONE : TEXT
+  DS_MESSAGE : TEXT
+  TP_STATUS : TEXT
+  DTH_CREATED_AT : TIMESTAMP
+}
+
+SPECIES ||--|{ BREED : "has"
+SPECIES ||--o{ ANIMAL : "categorizes"
+BREED ||--o{ ANIMAL : "classifies"
+SIZE ||--o{ ANIMAL : "sizes"
+ANIMAL ||--o{ ADOPTION_REQUEST : "receives"
+
+@enduml

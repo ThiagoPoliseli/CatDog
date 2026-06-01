@@ -17,6 +17,7 @@ import {
   deleteSupabaseBreed,
   deleteSupabaseSize,
   deleteSupabaseSpecies,
+  listUserSupabaseAdoptionRequests,
   readSupabaseDb,
   updateSupabaseAdoptionRequestStatus,
   updateSupabaseAnimal,
@@ -132,6 +133,12 @@ export async function createAdoptionRequest(
     status: "received",
     createdAt: new Date().toISOString(),
   });
+}
+
+export async function listUserAdoptionRequests(
+  userId: string,
+): Promise<AdoptionRequest[]> {
+  return listUserSupabaseAdoptionRequests(userId);
 }
 
 export async function updateAdoptionRequestStatus(

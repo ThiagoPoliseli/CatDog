@@ -50,6 +50,7 @@ export type AdoptionRequest = {
   message: string;
   status: RequestStatus;
   createdAt: string;
+  userId?: string;
 };
 
 export type CatDogDatabase = {

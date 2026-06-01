@@ -5,12 +5,25 @@ import Image from "next/image";
 import { CalendarDays, Check, Filter, MapPin, Search, X } from "lucide-react";
 import type { AnimalView, Breed, Size, Species } from "@/lib/types";
 import { adoptionStatusLabels } from "@/lib/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+type User = {
+  id: string;
+  email: string;
+  name: string;
+};
 
 type Props = {
   animals: AnimalView[];
   species: Species[];
   breeds: Breed[];
   sizes: Size[];
+  user?: User | null;
 };
 
 type RequestState = {
@@ -28,7 +41,16 @@ function formatAge(months: number) {
   return rest ? `${years} anos e ${rest} meses` : `${years} anos`;
 }
 
-export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
+type AdoptionStatusVariant = "available" | "in_process" | "adopted";
+
+function statusVariant(status: string): AdoptionStatusVariant {
+  if (status === "available" || status === "in_process" || status === "adopted") {
+    return status as AdoptionStatusVariant;
+  }
+  return "adopted";
+}
+
+export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) {
   const [query, setQuery] = useState("");
   const [speciesId, setSpeciesId] = useState("");
   const [breedId, setBreedId] = useState("");
@@ -128,31 +150,33 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
     event.currentTarget.reset();
   }
 
+  const selectClass =
+    "flex h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
+
   return (
     <>
       <section className="toolbar" aria-label="Filtros de animais">
-        <label>
-          <span className="muted">Busca</span>
-          <div style={{ position: "relative" }}>
+        <div className="grid gap-1.5">
+          <Label className="text-muted-foreground text-xs">Busca</Label>
+          <div className="relative">
             <Search
               aria-hidden
               size={18}
-              style={{ left: 12, position: "absolute", top: 13 }}
+              className="absolute left-3 top-3 text-muted-foreground pointer-events-none"
             />
-            <input
-              className="field"
+            <Input
+              className="pl-9"
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Buscar por nome, cidade ou raca"
-              style={{ paddingLeft: 38 }}
               value={query}
             />
           </div>
-        </label>
+        </div>
 
-        <label>
-          <span className="muted">Especie</span>
+        <div className="grid gap-1.5">
+          <Label className="text-muted-foreground text-xs">Especie</Label>
           <select
-            className="select"
+            className={selectClass}
             onChange={(event) => {
               setSpeciesId(event.target.value);
               setBreedId("");
@@ -166,12 +190,12 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label>
-          <span className="muted">Raca</span>
+        <div className="grid gap-1.5">
+          <Label className="text-muted-foreground text-xs">Raca</Label>
           <select
-            className="select"
+            className={selectClass}
             onChange={(event) => setBreedId(event.target.value)}
             value={breedId}
           >
@@ -182,12 +206,12 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label>
-          <span className="muted">Porte</span>
+        <div className="grid gap-1.5">
+          <Label className="text-muted-foreground text-xs">Porte</Label>
           <select
-            className="select"
+            className={selectClass}
             onChange={(event) => setSizeId(event.target.value)}
             value={sizeId}
           >
@@ -198,12 +222,12 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
               </option>
             ))}
           </select>
-        </label>
+        </div>
 
-        <label>
-          <span className="muted">Status</span>
+        <div className="grid gap-1.5">
+          <Label className="text-muted-foreground text-xs">Status</Label>
           <select
-            className="select"
+            className={selectClass}
             onChange={(event) => setStatus(event.target.value)}
             value={status}
           >
@@ -212,12 +236,14 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
             <option value="in_process">Em processo</option>
             <option value="adopted">Adotado</option>
           </select>
-        </label>
+        </div>
 
-        <button className="button secondary" onClick={clearFilters} type="button">
-          <Filter size={16} aria-hidden />
-          Limpar
-        </button>
+        <div className="flex items-end">
+          <Button variant="outline" onClick={clearFilters} type="button">
+            <Filter size={16} aria-hidden />
+            Limpar
+          </Button>
+        </div>
       </section>
 
       {filteredAnimals.length ? (
@@ -239,9 +265,9 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
                       {animal.breedName}
                     </p>
                   </div>
-                  <span className={`pill ${animal.status}`}>
+                  <Badge variant={statusVariant(animal.status)}>
                     {adoptionStatusLabels[animal.status]}
-                  </span>
+                  </Badge>
                 </div>
 
                 <p className="muted" style={{ margin: 0 }}>
@@ -249,13 +275,13 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
                 </p>
 
                 <div className="meta">
-                  <span className="pill">{animal.speciesName}</span>
-                  <span className="pill">{animal.sizeName}</span>
-                  <span className="pill">{animal.sex}</span>
-                  <span className="pill">
+                  <Badge variant="species">{animal.speciesName}</Badge>
+                  <Badge variant="species">{animal.sizeName}</Badge>
+                  <Badge variant="species">{animal.sex}</Badge>
+                  <Badge variant="species">
                     <CalendarDays size={13} aria-hidden />
                     {formatAge(animal.ageMonths)}
-                  </span>
+                  </Badge>
                 </div>
 
                 <div className="meta">
@@ -263,8 +289,7 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
                   {animal.city} - {animal.state}
                 </div>
 
-                <button
-                  className="button"
+                <Button
                   disabled={animal.status === "adopted"}
                   onClick={() => {
                     setSelectedAnimal(animal);
@@ -274,7 +299,7 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
                 >
                   <Check size={16} aria-hidden />
                   {animal.status === "adopted" ? "Ja adotado" : "Tenho interesse"}
-                </button>
+                </Button>
               </div>
             </article>
           ))}
@@ -293,55 +318,70 @@ export function AnimalCatalog({ animals, species, breeds, sizes }: Props) {
           >
             <header>
               <h2 id="request-title">Solicitar adocao de {selectedAnimal.name}</h2>
-              <button
+              <Button
                 aria-label="Fechar"
-                className="button secondary"
+                variant="outline"
+                size="icon"
                 onClick={() => setSelectedAnimal(null)}
                 type="button"
               >
                 <X size={16} aria-hidden />
-              </button>
+              </Button>
             </header>
 
             {requestState.type !== "idle" ? (
-              <div className={`message ${requestState.type}`}>
-                {requestState.message}
-              </div>
+              <Alert
+                variant={requestState.type === "error" ? "destructive" : "success"}
+                className="mb-3"
+              >
+                <AlertDescription>{requestState.message}</AlertDescription>
+              </Alert>
             ) : null}
 
             <form className="form-grid" onSubmit={submitRequest}>
-              <label>
-                <span className="muted">Nome</span>
-                <input className="field" name="adopterName" required />
-              </label>
-              <label>
-                <span className="muted">E-mail</span>
-                <input className="field" name="email" required type="email" />
-              </label>
-              <label className="full">
-                <span className="muted">Telefone</span>
-                <input className="field" name="phone" required />
-              </label>
-              <label className="full">
-                <span className="muted">Mensagem</span>
-                <textarea
-                  className="textarea"
+              <div className="grid gap-1.5">
+                <Label htmlFor="adopterName">Nome</Label>
+                <Input
+                  id="adopterName"
+                  name="adopterName"
+                  required
+                  defaultValue={user?.name ?? ""}
+                />
+              </div>
+              <div className="grid gap-1.5">
+                <Label htmlFor="email">E-mail</Label>
+                <Input
+                  id="email"
+                  name="email"
+                  required
+                  type="email"
+                  defaultValue={user?.email ?? ""}
+                />
+              </div>
+              <div className="grid gap-1.5 full">
+                <Label htmlFor="phone">Telefone</Label>
+                <Input id="phone" name="phone" required />
+              </div>
+              <div className="grid gap-1.5 full">
+                <Label htmlFor="message">Mensagem</Label>
+                <Textarea
+                  id="message"
                   name="message"
                   placeholder="Conte por que voce quer adotar este animal."
                   required
                 />
-              </label>
+              </div>
               <div className="actions full">
-                <button className="button" disabled={isSubmitting} type="submit">
+                <Button disabled={isSubmitting} type="submit">
                   {isSubmitting ? "Enviando..." : "Enviar solicitacao"}
-                </button>
-                <button
-                  className="button secondary"
+                </Button>
+                <Button
+                  variant="outline"
                   onClick={() => setSelectedAnimal(null)}
                   type="button"
                 >
                   Cancelar
-                </button>
+                </Button>
               </div>
             </form>
           </section>

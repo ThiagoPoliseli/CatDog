@@ -1,0 +1,36 @@
+@startuml
+!define RELATIVE_INCLUDE .
+!include lib/C4_Component.puml
+
+title CatDog - C4 Component (Nível 3) — Next.js Server
+
+Container_Ext(webapp, "Next.js Web App", "React / TypeScript", "Browser")
+ContainerDb_Ext(supabase, "Supabase", "PostgreSQL", "Banco de dados externo")
+
+Container_Boundary(server, "Next.js Server") {
+  Component(catalogo, "Catalogo Page", "Next.js RSC", "src/app/animais/page.tsx\nLista animais disponíveis para adoção")
+  Component(admin_pages, "Admin Pages", "Next.js RSC + Server Actions", "src/app/admin/\nCRUD de animais, espécies, raças, portes e solicitações")
+  Component(api_route, "Adoption Request API", "Next.js API Route", "src/app/api/adoption-requests/route.ts\nRegistra solicitações via HTTP POST")
+  Component(auth, "Auth", "TypeScript", "src/lib/auth.ts\nAutenticação simples por cookie para área admin")
+  Component(validators, "Validators", "Zod", "src/lib/\nValidações de entradas e formulários")
+  Component(store, "Store", "TypeScript", "src/lib/store.ts\nFachada de persistência independente de implementação")
+  Component(supabase_store, "Supabase Store", "supabase-js SDK", "src/lib/supabase-store.ts\nImplementação concreta da persistência com Supabase")
+}
+
+Rel(webapp, catalogo, "GET /animais", "RSC fetch")
+Rel(webapp, admin_pages, "GET/POST /admin", "RSC + Server Actions")
+Rel(webapp, api_route, "POST /api/adoption-requests", "HTTP")
+
+Rel(admin_pages, auth, "Verifica cookie de autenticação")
+Rel(admin_pages, store, "Consulta e persiste dados de animais")
+Rel(admin_pages, validators, "Valida dados de entrada")
+
+Rel(catalogo, store, "Consulta animais disponíveis")
+
+Rel(api_route, validators, "Valida payload da solicitação")
+Rel(api_route, store, "Persiste solicitação de adoção")
+
+Rel(store, supabase_store, "Delega operações de persistência")
+Rel(supabase_store, supabase, "Executa queries SQL", "supabase-js SDK")
+
+@enduml

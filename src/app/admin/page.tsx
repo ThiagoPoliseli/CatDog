@@ -1,6 +1,15 @@
 import { ClipboardList, PawPrint, Ruler, Tags } from "lucide-react";
 import { listCatalog } from "@/lib/store";
 import { adoptionStatusLabels, requestStatusLabels } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -53,46 +62,46 @@ export default async function AdminPage() {
       <section className="panel">
         <h2>Status dos animais</h2>
         <div className="actions">
-          <span className="pill available">
+          <Badge variant="available">
             {adoptionStatusLabels.available}: {available}
-          </span>
-          <span className="pill in_process">
+          </Badge>
+          <Badge variant="in_process">
             {adoptionStatusLabels.in_process}: {inProcess}
-          </span>
-          <span className="pill adopted">
+          </Badge>
+          <Badge variant="adopted">
             {adoptionStatusLabels.adopted}: {adopted}
-          </span>
+          </Badge>
         </div>
       </section>
 
       <section className="panel">
         <h2>Ultimas solicitacoes</h2>
         <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Interessado</th>
-                <th>Animal</th>
-                <th>Status</th>
-                <th>Contato</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Interessado</TableHead>
+                <TableHead>Animal</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Contato</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {catalog.adoptionRequests.slice(0, 5).map((request) => {
                 const animal = catalog.animals.find(
                   (item) => item.id === request.animalId,
                 );
                 return (
-                  <tr key={request.id}>
-                    <td>{request.adopterName}</td>
-                    <td>{animal?.name ?? "Animal removido"}</td>
-                    <td>{requestStatusLabels[request.status]}</td>
-                    <td>{request.email}</td>
-                  </tr>
+                  <TableRow key={request.id}>
+                    <TableCell>{request.adopterName}</TableCell>
+                    <TableCell>{animal?.name ?? "Animal removido"}</TableCell>
+                    <TableCell>{requestStatusLabels[request.status]}</TableCell>
+                    <TableCell>{request.email}</TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </section>
     </>

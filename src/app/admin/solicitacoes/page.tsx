@@ -1,6 +1,15 @@
 import { listCatalog } from "@/lib/store";
 import { requestStatusLabels } from "@/lib/types";
 import { updateRequestStatusAction } from "../actions";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -20,39 +29,39 @@ export default async function AdminRequestsPage() {
 
       <section className="panel">
         <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Interessado</th>
-                <th>Animal</th>
-                <th>Mensagem</th>
-                <th>Status</th>
-                <th>Acoes</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Interessado</TableHead>
+                <TableHead>Animal</TableHead>
+                <TableHead>Mensagem</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Acoes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {catalog.adoptionRequests.map((request) => {
                 const animal = catalog.animals.find(
                   (item) => item.id === request.animalId,
                 );
                 return (
-                  <tr key={request.id}>
-                    <td>
+                  <TableRow key={request.id}>
+                    <TableCell>
                       <strong>{request.adopterName}</strong>
                       <p className="muted">
                         {request.email}
                         <br />
                         {request.phone}
                       </p>
-                    </td>
-                    <td>{animal?.name ?? "Animal removido"}</td>
-                    <td>{request.message}</td>
-                    <td>{requestStatusLabels[request.status]}</td>
-                    <td>
+                    </TableCell>
+                    <TableCell>{animal?.name ?? "Animal removido"}</TableCell>
+                    <TableCell>{request.message}</TableCell>
+                    <TableCell>{requestStatusLabels[request.status]}</TableCell>
+                    <TableCell>
                       <form action={updateRequestStatusAction} className="actions">
                         <input name="id" type="hidden" value={request.id} />
                         <select
-                          className="select"
+                          className="flex h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                           defaultValue={request.status}
                           name="status"
                         >
@@ -62,16 +71,14 @@ export default async function AdminRequestsPage() {
                           <option value="rejected">Recusada</option>
                           <option value="completed">Concluida</option>
                         </select>
-                        <button className="button" type="submit">
-                          Salvar
-                        </button>
+                        <Button type="submit">Salvar</Button>
                       </form>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </section>
     </>

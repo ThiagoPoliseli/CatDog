@@ -1,5 +1,16 @@
 import { listCatalog } from "@/lib/store";
 import { createBreedAction, deleteBreedAction } from "../actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
 export const dynamic = "force-dynamic";
 
@@ -17,13 +28,18 @@ export default async function AdminBreedsPage() {
 
       <section className="panel">
         <form action={createBreedAction} className="form-grid">
-          <label>
-            <span className="muted">Nome da raca</span>
-            <input className="field" name="name" required />
-          </label>
-          <label>
-            <span className="muted">Especie</span>
-            <select className="select" name="speciesId" required>
+          <div className="grid gap-1.5">
+            <Label htmlFor="breed-name">Nome da raca</Label>
+            <Input id="breed-name" name="name" required />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="breed-species">Especie</Label>
+            <select
+              id="breed-species"
+              className="flex h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+              name="speciesId"
+              required
+            >
               <option value="">Selecione</option>
               {catalog.species.map((item) => (
                 <option key={item.id} value={item.id}>
@@ -31,45 +47,47 @@ export default async function AdminBreedsPage() {
                 </option>
               ))}
             </select>
-          </label>
-          <button className="button full" type="submit">
-            Adicionar
-          </button>
+          </div>
+          <div className="full flex items-end">
+            <Button type="submit" className="w-full">
+              Adicionar
+            </Button>
+          </div>
         </form>
       </section>
 
       <section className="panel">
         <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Nome</th>
-                <th>Especie</th>
-                <th>Acoes</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Nome</TableHead>
+                <TableHead>Especie</TableHead>
+                <TableHead>Acoes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {catalog.breeds.map((item) => {
-                const species = catalog.species.find(
-                  (speciesItem) => speciesItem.id === item.speciesId,
+                const speciesItem = catalog.species.find(
+                  (s) => s.id === item.speciesId,
                 );
                 return (
-                  <tr key={item.id}>
-                    <td>{item.name}</td>
-                    <td>{species?.name ?? "Nao identificada"}</td>
-                    <td>
+                  <TableRow key={item.id}>
+                    <TableCell>{item.name}</TableCell>
+                    <TableCell>{speciesItem?.name ?? "Nao identificada"}</TableCell>
+                    <TableCell>
                       <form action={deleteBreedAction}>
                         <input name="id" type="hidden" value={item.id} />
-                        <button className="button danger" type="submit">
+                        <Button variant="destructive" type="submit">
                           Remover
-                        </button>
+                        </Button>
                       </form>
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 );
               })}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </section>
     </>

@@ -1,17 +1,46 @@
-:root {
-  --bg: #faf7f2;
-  --surface: #ffffff;
-  --surface-strong: #fff4ea;
-  --ink: #24201c;
-  --muted: #6f665d;
-  --line: #e6ded5;
-  --brand: #8b4cf6;
-  --brand-strong: #6f35dc;
-  --accent: #f97316;
-  --ok: #15803d;
-  --warn: #b45309;
-  --danger: #b91c1c;
-  --shadow: 0 18px 45px rgba(65, 48, 33, 0.12);
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Project palette */
+    --bg: #faf7f2;
+    --surface: #ffffff;
+    --surface-strong: #fff4ea;
+    --ink: #24201c;
+    --muted: #6f665d;
+    --line: #e6ded5;
+    --brand: #8b4cf6;
+    --brand-strong: #6f35dc;
+    --accent-color: #f97316;
+    --ok: #15803d;
+    --warn: #b45309;
+    --danger: #b91c1c;
+    --shadow: 0 18px 45px rgba(65, 48, 33, 0.12);
+
+    /* shadcn/ui CSS variables — mapped to project palette */
+    --background: 40 43% 97%;
+    --foreground: 25 14% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 25 14% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 25 14% 12%;
+    --primary: 265 89% 63%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 30 17% 94%;
+    --secondary-foreground: 25 14% 12%;
+    --muted-color: 30 10% 94%;
+    --muted-foreground: 25 9% 40%;
+    --accent: 22 100% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 69% 41%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 26 28% 88%;
+    --input: 26 28% 88%;
+    --ring: 265 89% 63%;
+    --radius: 0.5rem;
+  }
 }
 
 * {
@@ -51,6 +80,7 @@ button {
   min-height: 100vh;
 }
 
+/* Layout utilities kept as global CSS (not replaced by shadcn) */
 .topbar {
   align-items: center;
   background: rgba(250, 247, 242, 0.88);
@@ -75,7 +105,7 @@ button {
 
 .brand-mark {
   align-items: center;
-  background: linear-gradient(135deg, var(--accent), var(--brand));
+  background: linear-gradient(135deg, var(--accent-color), var(--brand));
   border-radius: 8px;
   color: #fff;
   display: inline-flex;
@@ -167,53 +197,6 @@ button {
   padding: 14px;
 }
 
-.field,
-.select,
-.textarea {
-  background: #fff;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  color: var(--ink);
-  min-height: 44px;
-  padding: 10px 12px;
-  width: 100%;
-}
-
-.textarea {
-  min-height: 110px;
-  resize: vertical;
-}
-
-.button {
-  align-items: center;
-  background: var(--brand);
-  border: 1px solid var(--brand);
-  border-radius: 8px;
-  color: #fff;
-  display: inline-flex;
-  font-weight: 700;
-  gap: 8px;
-  justify-content: center;
-  min-height: 44px;
-  padding: 10px 14px;
-}
-
-.button:hover {
-  background: var(--brand-strong);
-}
-
-.button.secondary {
-  background: var(--surface);
-  border-color: var(--line);
-  color: var(--ink);
-}
-
-.button.danger {
-  background: #fff1f2;
-  border-color: #fecdd3;
-  color: var(--danger);
-}
-
 .grid {
   display: grid;
   gap: 18px;
@@ -266,37 +249,6 @@ button {
   flex-wrap: wrap;
   gap: 8px;
   font-size: 13px;
-}
-
-.pill {
-  align-items: center;
-  background: var(--surface-strong);
-  border: 1px solid #ffdfc2;
-  border-radius: 999px;
-  color: #7c2d12;
-  display: inline-flex;
-  font-size: 12px;
-  font-weight: 700;
-  gap: 6px;
-  padding: 5px 8px;
-}
-
-.pill.available {
-  background: #ecfdf5;
-  border-color: #bbf7d0;
-  color: var(--ok);
-}
-
-.pill.in_process {
-  background: #fffbeb;
-  border-color: #fde68a;
-  color: var(--warn);
-}
-
-.pill.adopted {
-  background: #f1f5f9;
-  border-color: #cbd5e1;
-  color: #475569;
 }
 
 .empty {
@@ -457,36 +409,6 @@ button {
   min-height: calc(100vh - 71px);
   place-items: center;
   padding: 24px;
-}
-
-.login-box {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  box-shadow: var(--shadow);
-  max-width: 430px;
-  padding: 24px;
-  width: 100%;
-}
-
-.login-box h1 {
-  margin-top: 0;
-}
-
-.message {
-  border-radius: 8px;
-  margin: 12px 0;
-  padding: 12px;
-}
-
-.message.error {
-  background: #fff1f2;
-  color: var(--danger);
-}
-
-.message.success {
-  background: #ecfdf5;
-  color: var(--ok);
 }
 
 @media (max-width: 900px) {

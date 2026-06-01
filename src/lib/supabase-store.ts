@@ -51,6 +51,7 @@ type SupabaseAdoptionRequest = {
   message: string;
   status: AdoptionRequest["status"];
   created_at: string;
+  user_id?: string;
 };
 
 function getSupabaseUrl() {
@@ -145,6 +146,7 @@ function toAdoptionRequest(row: SupabaseAdoptionRequest): AdoptionRequest {
     message: row.message,
     status: row.status,
     createdAt: row.created_at,
+    userId: row.user_id,
   };
 }
 
@@ -202,6 +204,7 @@ function fromAdoptionRequest(
     message: request.message,
     status: request.status,
     created_at: request.createdAt,
+    user_id: request.userId,
   };
 }
 
@@ -326,6 +329,20 @@ export async function updateSupabaseAdoptionRequestStatus(
         .eq("id", id)
     ).error,
   );
+}
+
+export async function listUserSupabaseAdoptionRequests(
+  userId: string,
+): Promise<AdoptionRequest[]> {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("adoption_requests")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+
+  await assertNoError(error);
+  return (data ?? []).map(toAdoptionRequest);
 }
 
 export async function createSupabaseAdoptionRequest(

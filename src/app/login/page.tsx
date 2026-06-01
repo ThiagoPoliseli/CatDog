@@ -1,5 +1,10 @@
 import { Lock, Mail } from "lucide-react";
 import { loginAction } from "./actions";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type Props = {
   searchParams: Promise<{
@@ -12,59 +17,64 @@ export default async function LoginPage({ searchParams }: Props) {
 
   return (
     <main className="login-page">
-      <section className="login-box">
-        <h1>Entrar no CatDog</h1>
-        <p className="muted">
-          Acesse a area administrativa para gerenciar animais, dados auxiliares
-          e solicitacoes de adocao.
-        </p>
+      <Card className="w-full max-w-[430px]">
+        <CardHeader>
+          <h1 className="text-2xl font-bold">Entrar no CatDog</h1>
+          <p className="text-sm text-muted-foreground">
+            Acesse a area administrativa para gerenciar animais, dados auxiliares
+            e solicitacoes de adocao.
+          </p>
+        </CardHeader>
+        <CardContent>
+          {params.error ? (
+            <Alert variant="destructive" className="mb-4">
+              <AlertDescription>E-mail ou senha invalidos.</AlertDescription>
+            </Alert>
+          ) : null}
 
-        {params.error ? (
-          <div className="message error">E-mail ou senha invalidos.</div>
-        ) : null}
-
-        <form action={loginAction} className="form-grid">
-          <label className="full">
-            <span className="muted">E-mail</span>
-            <div style={{ position: "relative" }}>
-              <Mail
-                aria-hidden
-                size={18}
-                style={{ left: 12, position: "absolute", top: 13 }}
-              />
-              <input
-                className="field"
-                defaultValue="admin@catdog.local"
-                name="email"
-                required
-                style={{ paddingLeft: 38 }}
-                type="email"
-              />
+          <form action={loginAction} className="grid gap-4">
+            <div className="grid gap-1.5">
+              <Label htmlFor="email">E-mail</Label>
+              <div className="relative">
+                <Mail
+                  aria-hidden
+                  size={18}
+                  className="absolute left-3 top-3 text-muted-foreground"
+                />
+                <Input
+                  id="email"
+                  className="pl-9"
+                  defaultValue="admin@catdog.local"
+                  name="email"
+                  required
+                  type="email"
+                />
+              </div>
             </div>
-          </label>
-          <label className="full">
-            <span className="muted">Senha</span>
-            <div style={{ position: "relative" }}>
-              <Lock
-                aria-hidden
-                size={18}
-                style={{ left: 12, position: "absolute", top: 13 }}
-              />
-              <input
-                className="field"
-                defaultValue="admin123"
-                name="password"
-                required
-                style={{ paddingLeft: 38 }}
-                type="password"
-              />
+            <div className="grid gap-1.5">
+              <Label htmlFor="password">Senha</Label>
+              <div className="relative">
+                <Lock
+                  aria-hidden
+                  size={18}
+                  className="absolute left-3 top-3 text-muted-foreground"
+                />
+                <Input
+                  id="password"
+                  className="pl-9"
+                  defaultValue="admin123"
+                  name="password"
+                  required
+                  type="password"
+                />
+              </div>
             </div>
-          </label>
-          <button className="button full" type="submit">
-            Entrar
-          </button>
-        </form>
-      </section>
+            <Button type="submit" className="w-full">
+              Entrar
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
     </main>
   );
 }

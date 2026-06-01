@@ -1,6 +1,16 @@
 import { AnimalAdminForm } from "@/components/AnimalAdminForm";
 import { listCatalog } from "@/lib/store";
 import { adoptionStatusLabels } from "@/lib/types";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   createAnimalAction,
   deleteAnimalAction,
@@ -8,6 +18,8 @@ import {
 } from "../actions";
 
 export const dynamic = "force-dynamic";
+
+type AdoptionStatusVariant = "available" | "in_process" | "adopted";
 
 export default async function AdminAnimalsPage() {
   const catalog = await listCatalog();
@@ -38,38 +50,40 @@ export default async function AdminAnimalsPage() {
       <section className="panel">
         <h2>Animais cadastrados</h2>
         <div className="table-wrap">
-          <table className="table">
-            <thead>
-              <tr>
-                <th>Animal</th>
-                <th>Caracteristicas</th>
-                <th>Status</th>
-                <th>Local</th>
-                <th>Acoes</th>
-              </tr>
-            </thead>
-            <tbody>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Animal</TableHead>
+                <TableHead>Caracteristicas</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Local</TableHead>
+                <TableHead>Acoes</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
               {catalog.animals.map((animal) => (
-                <tr key={animal.id}>
-                  <td>
+                <TableRow key={animal.id}>
+                  <TableCell>
                     <strong>{animal.name}</strong>
                     <p className="muted">{animal.description}</p>
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     {animal.speciesName}, {animal.breedName}, {animal.sizeName}
-                  </td>
-                  <td>
-                    <span className={`pill ${animal.status}`}>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant={animal.status as AdoptionStatusVariant}>
                       {adoptionStatusLabels[animal.status]}
-                    </span>
-                  </td>
-                  <td>
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
                     {animal.city} - {animal.state}
-                  </td>
-                  <td>
+                  </TableCell>
+                  <TableCell>
                     <div className="actions">
                       <details>
-                        <summary className="button secondary">Editar</summary>
+                        <summary className="cursor-pointer text-sm font-medium px-3 py-2 rounded-lg border border-border bg-background hover:bg-secondary">
+                          Editar
+                        </summary>
                         <div className="panel" style={{ marginTop: 12 }}>
                           <AnimalAdminForm
                             action={updateAnimalAction}
@@ -82,16 +96,16 @@ export default async function AdminAnimalsPage() {
                       </details>
                       <form action={deleteAnimalAction}>
                         <input name="id" type="hidden" value={animal.id} />
-                        <button className="button danger" type="submit">
+                        <Button variant="destructive" type="submit">
                           Remover
-                        </button>
+                        </Button>
                       </form>
                     </div>
-                  </td>
-                </tr>
+                  </TableCell>
+                </TableRow>
               ))}
-            </tbody>
-          </table>
+            </TableBody>
+          </Table>
         </div>
       </section>
     </>

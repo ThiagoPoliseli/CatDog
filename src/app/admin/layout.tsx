@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { isAuthenticated } from "@/lib/auth";
 import { logoutAction } from "./actions";
+import { Button } from "@/components/ui/button";
 
 export default async function AdminLayout({
   children,
@@ -27,9 +28,9 @@ export default async function AdminLayout({
           <Link href="/admin/solicitacoes">Solicitacoes</Link>
         </nav>
         <form action={logoutAction} style={{ marginTop: 20 }}>
-          <button className="button secondary" type="submit">
+          <Button variant="outline" type="submit">
             Sair
-          </button>
+          </Button>
         </form>
       </aside>
       <section className="admin-content">{children}</section>

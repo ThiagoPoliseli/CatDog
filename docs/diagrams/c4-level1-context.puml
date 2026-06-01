@@ -1,0 +1,18 @@
+@startuml
+!define RELATIVE_INCLUDE .
+!include lib/C4_Context.puml
+
+title CatDog - C4 Context (Nível 1)
+
+Person(adopter, "Adotante", "Pessoa interessada em adotar um cão ou gato")
+Person(admin, "Administrador", "Equipe da organização que gerencia a plataforma")
+
+System(catdog, "CatDog", "Plataforma web de adoção de cães e gatos")
+
+System_Ext(supabase, "Supabase", "Backend-as-a-Service: PostgreSQL, autenticação e storage")
+
+Rel(adopter, catdog, "Navega catálogo e envia solicitações de adoção", "HTTPS")
+Rel(admin, catdog, "Gerencia animais e solicitações", "HTTPS + cookie auth")
+Rel(catdog, supabase, "Persiste e consulta dados", "supabase-js SDK")
+
+@enduml

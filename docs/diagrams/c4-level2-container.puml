@@ -1,0 +1,22 @@
+@startuml
+!define RELATIVE_INCLUDE .
+!include lib/C4_Container.puml
+
+title CatDog - C4 Container (Nível 2)
+
+Person(adopter, "Adotante", "Pessoa interessada em adotar um animal")
+Person(admin, "Administrador", "Equipe da organização que gerencia a plataforma")
+
+System_Boundary(catdog, "CatDog") {
+  Container(webapp, "Next.js Web App", "React / TypeScript", "Catálogo público, filtros de animais e formulário de solicitação de adoção")
+  Container(server, "Next.js Server", "Node.js", "Server Components, Server Actions e API Route /api/adoption-requests")
+}
+
+ContainerDb_Ext(supabase_db, "Supabase", "PostgreSQL", "Tabelas: species, sizes, breeds, animals, adoption_requests")
+
+Rel(adopter, webapp, "Navega catálogo e envia solicitações", "HTTPS")
+Rel(admin, webapp, "Gerencia animais e solicitações", "HTTPS + cookie auth")
+Rel(webapp, server, "Requisições RSC / Server Actions / fetch")
+Rel(server, supabase_db, "Persiste e consulta dados", "supabase-js SDK")
+
+@enduml
