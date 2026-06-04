@@ -69,7 +69,9 @@ export default function EntrarPage() {
     setIsSubmitting(false);
 
     if (authError) {
-      setError("E-mail ou senha invalidos. Crie uma conta se ainda nao tiver acesso.");
+      setError(
+        "E-mail ou senha invalidos. Crie uma conta se ainda nao tiver acesso.",
+      );
       return;
     }
 
@@ -130,7 +132,8 @@ export default function EntrarPage() {
           {signup ? (
             <Alert variant="success" className="mb-4">
               <AlertDescription>
-                Conta criada! Se não receber o e-mail, verifique sua caixa de spam.
+                Conta criada! Se não receber o e-mail, verifique sua caixa de
+                spam.
               </AlertDescription>
             </Alert>
           ) : null}
