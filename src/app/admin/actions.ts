@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { signOut } from "@/lib/auth";
+import { createClient } from "@/lib/supabase/server";
 import {
   createAnimal,
   createBreed,
@@ -35,8 +35,9 @@ function revalidateAdmin() {
 }
 
 export async function logoutAction() {
-  await signOut();
-  redirect("/animais");
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect("/entrar");
 }
 
 export async function createSpeciesAction(formData: FormData) {

@@ -4,47 +4,46 @@
 
 @layer base {
   :root {
-    /* Project palette */
-    --bg: #faf7f2;
+    --bg: #f7f8f5;
     --surface: #ffffff;
-    --surface-strong: #fff4ea;
-    --ink: #24201c;
-    --muted: #6f665d;
-    --line: #e6ded5;
-    --brand: #8b4cf6;
-    --brand-strong: #6f35dc;
-    --accent-color: #f97316;
+    --surface-strong: #edf7f5;
+    --ink: #1f2933;
+    --muted: #60706d;
+    --line: #dde6e2;
+    --brand: #0f766e;
+    --brand-strong: #0b5f59;
+    --accent-color: #e85d3f;
     --ok: #15803d;
     --warn: #b45309;
     --danger: #b91c1c;
-    --shadow: 0 18px 45px rgba(65, 48, 33, 0.12);
+    --shadow: 0 18px 45px rgba(31, 41, 51, 0.12);
 
-    /* shadcn/ui CSS variables — mapped to project palette */
-    --background: 40 43% 97%;
-    --foreground: 25 14% 12%;
+    --background: 84 18% 97%;
+    --foreground: 210 20% 16%;
     --card: 0 0% 100%;
-    --card-foreground: 25 14% 12%;
+    --card-foreground: 210 20% 16%;
     --popover: 0 0% 100%;
-    --popover-foreground: 25 14% 12%;
-    --primary: 265 89% 63%;
+    --popover-foreground: 210 20% 16%;
+    --primary: 176 77% 26%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 30 17% 94%;
-    --secondary-foreground: 25 14% 12%;
-    --muted-color: 30 10% 94%;
-    --muted-foreground: 25 9% 40%;
-    --accent: 22 100% 55%;
+    --secondary: 165 22% 92%;
+    --secondary-foreground: 176 56% 19%;
+    --muted-color: 150 12% 93%;
+    --muted-foreground: 172 8% 41%;
+    --accent: 11 79% 58%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 69% 41%;
     --destructive-foreground: 0 0% 100%;
-    --border: 26 28% 88%;
-    --input: 26 28% 88%;
-    --ring: 265 89% 63%;
+    --border: 156 16% 88%;
+    --input: 156 16% 88%;
+    --ring: 176 77% 26%;
     --radius: 0.5rem;
   }
 }
 
 * {
   box-sizing: border-box;
+  border-color: hsl(var(--border));
 }
 
 html {
@@ -53,8 +52,8 @@ html {
 
 body {
   margin: 0;
-  background: var(--bg);
-  color: var(--ink);
+  background: hsl(var(--background));
+  color: hsl(var(--foreground));
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -76,36 +75,48 @@ button {
   cursor: pointer;
 }
 
+button:disabled {
+  cursor: not-allowed;
+}
+
 .shell {
   min-height: 100vh;
 }
 
-/* Layout utilities kept as global CSS (not replaced by shadcn) */
 .topbar {
   align-items: center;
-  background: rgba(250, 247, 242, 0.88);
-  border-bottom: 1px solid var(--line);
+  background: rgba(247, 248, 245, 0.9);
+  border-bottom: 1px solid hsl(var(--border));
   display: flex;
   gap: 18px;
   justify-content: space-between;
-  padding: 16px clamp(16px, 4vw, 56px);
+  padding: 14px clamp(16px, 4vw, 56px);
   position: sticky;
   top: 0;
   z-index: 20;
   backdrop-filter: blur(16px);
 }
 
-.brand {
+.brand,
+.auth-brand {
   align-items: center;
   display: flex;
-  font-size: 20px;
   font-weight: 800;
   gap: 10px;
 }
 
+.brand {
+  font-size: 20px;
+}
+
+.auth-brand {
+  color: var(--brand);
+  font-size: 15px;
+}
+
 .brand-mark {
   align-items: center;
-  background: linear-gradient(135deg, var(--accent-color), var(--brand));
+  background: linear-gradient(135deg, var(--brand), var(--accent-color));
   border-radius: 8px;
   color: #fff;
   display: inline-flex;
@@ -118,27 +129,12 @@ button {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-}
-
-.nav a,
-.nav button {
-  align-items: center;
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: 8px;
-  color: var(--muted);
-  display: inline-flex;
   gap: 8px;
-  min-height: 38px;
-  padding: 8px 12px;
+  justify-content: flex-end;
 }
 
-.nav a:hover,
-.nav button:hover {
-  background: var(--surface);
-  border-color: var(--line);
-  color: var(--ink);
+.nav form {
+  display: flex;
 }
 
 .page {
@@ -172,6 +168,7 @@ button {
 
 .hero-media {
   aspect-ratio: 4 / 3;
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: var(--shadow);
   min-height: 300px;
@@ -185,11 +182,70 @@ button {
   width: 100%;
 }
 
-.toolbar {
-  background: var(--surface);
-  border: 1px solid var(--line);
+.auth-shell {
+  align-items: center;
+  display: grid;
+  gap: clamp(24px, 5vw, 54px);
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px);
+  margin: 0 auto;
+  max-width: 1180px;
+  min-height: calc(100vh - 71px);
+  padding: clamp(24px, 5vw, 64px) clamp(16px, 4vw, 56px);
+}
+
+.auth-copy {
+  display: grid;
+  gap: 24px;
+}
+
+.auth-copy h1 {
+  font-size: clamp(34px, 6vw, 68px);
+  letter-spacing: 0;
+  line-height: 0.98;
+  margin: 0 0 18px;
+  max-width: 760px;
+}
+
+.auth-copy p {
+  color: var(--muted);
+  font-size: 18px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: 620px;
+}
+
+.auth-benefits {
+  display: grid;
+  gap: 12px;
+  max-width: 520px;
+}
+
+.auth-benefits span {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(65, 48, 33, 0.06);
+  display: flex;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 12px;
+}
+
+.auth-benefits svg {
+  color: var(--brand);
+  flex: 0 0 auto;
+}
+
+.auth-card {
+  box-shadow: var(--shadow);
+  width: 100%;
+}
+
+.toolbar {
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(31, 41, 51, 0.06);
   display: grid;
   gap: 12px;
   grid-template-columns: minmax(220px, 1fr) repeat(4, minmax(130px, 170px)) auto;
@@ -197,17 +253,17 @@ button {
   padding: 14px;
 }
 
-.grid {
+.animal-grid {
   display: grid;
   gap: 18px;
   grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
 }
 
 .animal-card {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(65, 48, 33, 0.06);
+  box-shadow: 0 10px 30px rgba(31, 41, 51, 0.06);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -252,8 +308,8 @@ button {
 }
 
 .empty {
-  background: var(--surface);
-  border: 1px dashed var(--line);
+  background: hsl(var(--card));
+  border: 1px dashed hsl(var(--border));
   border-radius: 8px;
   color: var(--muted);
   padding: 28px;
@@ -262,7 +318,7 @@ button {
 
 .dialog-backdrop {
   align-items: center;
-  background: rgba(24, 20, 18, 0.48);
+  background: rgba(31, 41, 51, 0.48);
   display: flex;
   inset: 0;
   justify-content: center;
@@ -272,7 +328,8 @@ button {
 }
 
 .dialog {
-  background: var(--surface);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   box-shadow: var(--shadow);
   max-width: 560px;
@@ -283,11 +340,13 @@ button {
 .dialog header {
   align-items: center;
   display: flex;
+  gap: 16px;
   justify-content: space-between;
   margin-bottom: 14px;
 }
 
 .dialog h2 {
+  font-size: 22px;
   margin: 0;
 }
 
@@ -308,9 +367,14 @@ button {
 }
 
 .sidebar {
-  background: #201a16;
-  color: #fef7ed;
+  background: #172422;
+  color: #f4fbf9;
   padding: 22px;
+}
+
+.sidebar h2 {
+  font-size: 18px;
+  margin: 0 0 18px;
 }
 
 .sidebar nav {
@@ -320,12 +384,13 @@ button {
 
 .sidebar a {
   border-radius: 8px;
-  color: #eaded2;
+  color: #dbe9e6;
   padding: 10px 12px;
 }
 
 .sidebar a:hover {
   background: rgba(255, 255, 255, 0.08);
+  color: #ffffff;
 }
 
 .admin-content {
@@ -353,10 +418,14 @@ button {
 }
 
 .stat {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   padding: 18px;
+}
+
+.stat svg {
+  color: var(--brand);
 }
 
 .stat strong {
@@ -366,11 +435,16 @@ button {
 }
 
 .panel {
-  background: var(--surface);
-  border: 1px solid var(--line);
+  background: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
   border-radius: 8px;
   margin-bottom: 18px;
   padding: 18px;
+}
+
+.panel h2 {
+  font-size: 20px;
+  margin: 0 0 14px;
 }
 
 .table-wrap {
@@ -385,7 +459,7 @@ button {
 
 .table th,
 .table td {
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid hsl(var(--border));
   padding: 12px;
   text-align: left;
   vertical-align: top;
@@ -413,8 +487,17 @@ button {
 
 @media (max-width: 900px) {
   .hero,
+  .auth-shell,
   .admin-layout {
     grid-template-columns: 1fr;
+  }
+
+  .auth-shell {
+    align-items: start;
+  }
+
+  .auth-copy h1 {
+    max-width: 680px;
   }
 
   .toolbar,
@@ -433,6 +516,11 @@ button {
     flex-direction: column;
   }
 
+  .nav {
+    justify-content: flex-start;
+    width: 100%;
+  }
+
   .toolbar,
   .stats,
   .form-grid {
@@ -441,5 +529,9 @@ button {
 
   .hero-media {
     min-height: 220px;
+  }
+
+  .auth-copy h1 {
+    font-size: 38px;
   }
 }

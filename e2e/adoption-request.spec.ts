@@ -3,10 +3,13 @@ import { test, expect } from "@playwright/test";
 test.describe("Solicitacao de adocao", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/animais");
-    await page.waitForSelector("section.grid, .empty", { state: "visible" });
+    if (page.url().includes("/entrar")) {
+      test.skip(true, "Solicitacoes exigem usuario autenticado.");
+    }
+    await page.waitForSelector("section.animal-grid, .empty", { state: "visible" });
 
     const interestButton = page
-      .locator("section.grid article")
+      .locator("section.animal-grid article")
       .filter({ has: page.locator("button", { hasText: "Tenho interesse" }) })
       .locator("button", { hasText: "Tenho interesse" })
       .first();

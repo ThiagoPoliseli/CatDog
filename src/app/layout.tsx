@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { LogIn, PawPrint } from "lucide-react";
+import { ClipboardList, LogIn, PawPrint, Shield, UserPlus } from "lucide-react";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import { userSignOutAction } from "@/app/entrar/actions";
+import { Button } from "@/components/ui/button";
 
 export const metadata: Metadata = {
   title: "CatDog",
@@ -25,27 +26,54 @@ export default async function RootLayout({
       <body>
         <div className="shell">
           <header className="topbar">
-            <Link className="brand" href="/animais">
+            <Link className="brand" href={user ? "/animais" : "/entrar"}>
               <span className="brand-mark">
                 <PawPrint size={20} aria-hidden />
               </span>
               CatDog
             </Link>
             <nav className="nav" aria-label="Navegacao principal">
-              <Link href="/animais">Animais</Link>
-              <Link href="/admin">Admin</Link>
               {user ? (
                 <>
-                  <Link href="/minhas-solicitacoes">Minhas Solicitacoes</Link>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/animais">
+                      <PawPrint size={16} aria-hidden />
+                      Animais
+                    </Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/minhas-solicitacoes">
+                      <ClipboardList size={16} aria-hidden />
+                      Minhas solicitacoes
+                    </Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/admin">
+                      <Shield size={16} aria-hidden />
+                      Admin
+                    </Link>
+                  </Button>
                   <form action={userSignOutAction}>
-                    <button type="submit">Sair</button>
+                    <Button variant="outline" size="sm" type="submit">
+                      Sair
+                    </Button>
                   </form>
                 </>
               ) : (
-                <Link href="/entrar">
-                  <LogIn size={16} aria-hidden />
-                  Entrar
-                </Link>
+                <>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/cadastro">
+                      <UserPlus size={16} aria-hidden />
+                      Criar conta
+                    </Link>
+                  </Button>
+                  <Button asChild size="sm">
+                    <Link href="/entrar">
+                      <LogIn size={16} aria-hidden />
+                      Entrar
+                    </Link>
+                  </Button>
+                </>
               )}
             </nav>
           </header>

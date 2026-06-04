@@ -1,18 +1,21 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { isAuthenticated } from "@/lib/auth";
 import { logoutAction } from "./actions";
 import { Button } from "@/components/ui/button";
+import { createClient } from "@/lib/supabase/server";
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const authenticated = await isAuthenticated();
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (!authenticated) {
-    redirect("/login");
+  if (!user) {
+    redirect("/entrar?next=/admin");
   }
 
   return (

@@ -1,15 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { PawPrint } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import {
+  CheckCircle2,
+  Eye,
+  EyeOff,
+  Lock,
+  Mail,
+  PawPrint,
+  User,
+} from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 
 type SignUpFields = {
   name: string;
@@ -18,10 +33,22 @@ type SignUpFields = {
   confirmPassword: string;
 };
 
+function getSafeNext(value: string | null) {
+  if (!value || !value.startsWith("/") || value.startsWith("//")) {
+    return "/animais";
+  }
+
+  if (value.startsWith("/entrar") || value.startsWith("/cadastro")) {
+    return "/animais";
+  }
+
+  return value;
+}
+
 function extractFields(formData: FormData): SignUpFields {
   return {
-    name: String(formData.get("name") ?? ""),
-    email: String(formData.get("email") ?? ""),
+    name: String(formData.get("name") ?? "").trim(),
+    email: String(formData.get("email") ?? "").trim(),
     password: String(formData.get("password") ?? ""),
     confirmPassword: String(formData.get("confirmPassword") ?? ""),
   };
@@ -29,8 +56,15 @@ function extractFields(formData: FormData): SignUpFields {
 
 export default function CadastroPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = useMemo(
+    () => getSafeNext(searchParams.get("next")),
+    [searchParams],
+  );
   const [error, setError] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
@@ -41,6 +75,16 @@ export default function CadastroPage() {
     const { name, email, password, confirmPassword } = extractFields(
       new FormData(event.currentTarget),
     );
+
+    if (name.length < 2) {
+      setError("Informe seu nome para criar a conta.");
+      return;
+    }
+
+    if (password.length < 6) {
+      setError("A senha deve ter pelo menos 6 caracteres.");
+      return;
+    }
 
     if (password !== confirmPassword) {
       setError("As senhas nao coincidem.");
@@ -53,7 +97,10 @@ export default function CadastroPage() {
     const { data, error: authError } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { name } },
+      options: {
+        data: { name },
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
+      },
     });
 
     setIsSubmitting(false);
@@ -70,31 +117,55 @@ export default function CadastroPage() {
 
     if (data.session) {
       router.refresh();
-      router.push("/animais");
+      router.push(next);
       return;
     }
 
-    setSuccessMessage(
-      "Conta criada! Verifique seu e-mail para confirmar o cadastro.",
-    );
+    router.push(`/entrar?signup=1&next=${encodeURIComponent(next)}`);
   }
 
   return (
-    <main className="login-page">
-      <Card className="w-full max-w-[430px]">
+    <main className="auth-shell">
+      <section className="auth-copy" aria-label="Cadastro CatDog">
+        <Badge variant="available" className="w-fit">
+          <CheckCircle2 size={14} aria-hidden />
+          Cadastro gratuito
+        </Badge>
+        <div>
+          <h1>Crie sua conta para acessar a plataforma.</h1>
+          <p>
+            O login protege os dados das solicitacoes e permite que voce
+            acompanhe seus pedidos de adocao com mais clareza.
+          </p>
+        </div>
+        <div className="auth-benefits">
+          <span>
+            <CheckCircle2 size={18} aria-hidden />
+            Acesso ao catalogo completo
+          </span>
+          <span>
+            <CheckCircle2 size={18} aria-hidden />
+            Formularios preenchidos com seus dados
+          </span>
+          <span>
+            <CheckCircle2 size={18} aria-hidden />
+            Status das solicitacoes em um so lugar
+          </span>
+        </div>
+      </section>
+
+      <Card className="auth-card">
         <CardHeader>
-          <div className="flex items-center gap-2 mb-2">
+          <div className="auth-brand">
             <span className="brand-mark">
               <PawPrint size={20} aria-hidden />
             </span>
-            <span className="text-lg font-extrabold">CatDog</span>
+            <span>CatDog</span>
           </div>
-          <h1 className="text-2xl font-bold">Criar conta</h1>
-          <p className="text-sm text-muted-foreground">
-            <Link href="/entrar" className="text-primary hover:underline">
-              Ja possui uma conta? Entre aqui
-            </Link>
-          </p>
+          <CardTitle className="text-2xl">Criar conta</CardTitle>
+          <CardDescription>
+            Preencha seus dados para liberar o acesso ao CatDog.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {error ? (
@@ -112,51 +183,123 @@ export default function CadastroPage() {
           <form onSubmit={handleSubmit} className="grid gap-4">
             <div className="grid gap-1.5">
               <Label htmlFor="name">Nome</Label>
-              <Input
-                id="name"
-                name="name"
-                required
-                placeholder="Seu nome completo"
-              />
+              <div className="relative">
+                <User
+                  aria-hidden
+                  size={18}
+                  className="pointer-events-none absolute left-3 top-3 text-muted-foreground"
+                />
+                <Input
+                  id="name"
+                  className="pl-9"
+                  name="name"
+                  required
+                  autoComplete="name"
+                  placeholder="Seu nome completo"
+                />
+              </div>
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="email">E-mail</Label>
-              <Input
-                id="email"
-                name="email"
-                required
-                type="email"
-                placeholder="seu@email.com"
-              />
+              <div className="relative">
+                <Mail
+                  aria-hidden
+                  size={18}
+                  className="pointer-events-none absolute left-3 top-3 text-muted-foreground"
+                />
+                <Input
+                  id="email"
+                  className="pl-9"
+                  name="email"
+                  required
+                  type="email"
+                  autoComplete="email"
+                  placeholder="seu@email.com"
+                />
+              </div>
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                name="password"
-                required
-                type="password"
-                placeholder="Crie uma senha"
-              />
+              <div className="relative">
+                <Lock
+                  aria-hidden
+                  size={18}
+                  className="pointer-events-none absolute left-3 top-3 text-muted-foreground"
+                />
+                <Input
+                  id="password"
+                  className="px-9"
+                  name="password"
+                  required
+                  minLength={6}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  placeholder="Minimo de 6 caracteres"
+                />
+                <Button
+                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  className="absolute right-1 top-1"
+                  size="icon"
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setShowPassword((value) => !value)}
+                >
+                  {showPassword ? (
+                    <EyeOff size={16} aria-hidden />
+                  ) : (
+                    <Eye size={16} aria-hidden />
+                  )}
+                </Button>
+              </div>
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="confirmPassword">Confirmar senha</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                required
-                type="password"
-                placeholder="Repita a senha"
-              />
+              <div className="relative">
+                <Lock
+                  aria-hidden
+                  size={18}
+                  className="pointer-events-none absolute left-3 top-3 text-muted-foreground"
+                />
+                <Input
+                  id="confirmPassword"
+                  className="px-9"
+                  name="confirmPassword"
+                  required
+                  minLength={6}
+                  type={showConfirmPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  placeholder="Repita a senha"
+                />
+                <Button
+                  aria-label={
+                    showConfirmPassword ? "Ocultar senha" : "Mostrar senha"
+                  }
+                  className="absolute right-1 top-1"
+                  size="icon"
+                  type="button"
+                  variant="ghost"
+                  onClick={() => setShowConfirmPassword((value) => !value)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff size={16} aria-hidden />
+                  ) : (
+                    <Eye size={16} aria-hidden />
+                  )}
+                </Button>
+              </div>
             </div>
             <Button type="submit" className="w-full" disabled={isSubmitting}>
-              {isSubmitting ? "Cadastrando..." : "Cadastrar"}
+              {isSubmitting ? "Criando conta..." : "Criar conta"}
             </Button>
           </form>
 
-          <p className="mt-4 text-center text-sm text-muted-foreground">
-            <Link href="/entrar" className="text-primary hover:underline">
-              Voltar
+          <p className="mt-5 text-center text-sm text-muted-foreground">
+            Ja possui uma conta?{" "}
+            <Link
+              href={`/entrar?next=${encodeURIComponent(next)}`}
+              className="font-medium text-primary hover:underline"
+            >
+              Entrar
             </Link>
           </p>
         </CardContent>

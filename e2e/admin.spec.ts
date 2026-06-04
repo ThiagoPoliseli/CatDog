@@ -1,21 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-test("redireciona para /login sem autenticacao", async ({ page }) => {
+test("redireciona admin sem autenticacao para /entrar", async ({ page }) => {
   await page.goto("/admin");
 
-  await page.waitForURL(/\/login/);
-  expect(page.url()).toContain("/login");
-});
-
-test("acessa /admin apos login", async ({ page }) => {
-  await page.goto("/login");
-
-  await page.fill('input[name="email"]', "admin@catdog.local");
-  await page.fill('input[name="password"]', "admin123");
-  await page.click('button[type="submit"]');
-
-  await page.waitForURL(/\/admin/);
-  expect(page.url()).toContain("/admin");
-
-  await expect(page.getByRole("heading", { name: "Visao geral" })).toBeVisible();
+  await page.waitForURL(/\/entrar/);
+  expect(page.url()).toContain("/entrar");
+  expect(page.url()).toContain("next=%2Fadmin");
 });

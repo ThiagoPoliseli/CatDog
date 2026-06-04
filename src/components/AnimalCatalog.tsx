@@ -11,6 +11,13 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type User = {
   id: string;
@@ -150,9 +157,6 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
     event.currentTarget.reset();
   }
 
-  const selectClass =
-    "flex h-11 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring";
-
   return (
     <>
       <section className="toolbar" aria-label="Filtros de animais">
@@ -175,67 +179,83 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
 
         <div className="grid gap-1.5">
           <Label className="text-muted-foreground text-xs">Especie</Label>
-          <select
-            className={selectClass}
-            onChange={(event) => {
-              setSpeciesId(event.target.value);
+          <Select
+            onValueChange={(value) => {
+              setSpeciesId(value === "all" ? "" : value);
               setBreedId("");
             }}
-            value={speciesId}
+            value={speciesId || "all"}
           >
-            <option value="">Todas</option>
-            {species.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Todas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              {species.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid gap-1.5">
           <Label className="text-muted-foreground text-xs">Raca</Label>
-          <select
-            className={selectClass}
-            onChange={(event) => setBreedId(event.target.value)}
-            value={breedId}
+          <Select
+            onValueChange={(value) => setBreedId(value === "all" ? "" : value)}
+            value={breedId || "all"}
           >
-            <option value="">Todas</option>
-            {filteredBreeds.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Todas" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todas</SelectItem>
+              {filteredBreeds.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid gap-1.5">
           <Label className="text-muted-foreground text-xs">Porte</Label>
-          <select
-            className={selectClass}
-            onChange={(event) => setSizeId(event.target.value)}
-            value={sizeId}
+          <Select
+            onValueChange={(value) => setSizeId(value === "all" ? "" : value)}
+            value={sizeId || "all"}
           >
-            <option value="">Todos</option>
-            {sizes.map((item) => (
-              <option key={item.id} value={item.id}>
-                {item.name}
-              </option>
-            ))}
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              {sizes.map((item) => (
+                <SelectItem key={item.id} value={item.id}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid gap-1.5">
           <Label className="text-muted-foreground text-xs">Status</Label>
-          <select
-            className={selectClass}
-            onChange={(event) => setStatus(event.target.value)}
-            value={status}
+          <Select
+            onValueChange={(value) => setStatus(value === "all" ? "" : value)}
+            value={status || "all"}
           >
-            <option value="">Todos</option>
-            <option value="available">Disponivel</option>
-            <option value="in_process">Em processo</option>
-            <option value="adopted">Adotado</option>
-          </select>
+            <SelectTrigger>
+              <SelectValue placeholder="Todos" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Todos</SelectItem>
+              <SelectItem value="available">Disponivel</SelectItem>
+              <SelectItem value="in_process">Em processo</SelectItem>
+              <SelectItem value="adopted">Adotado</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="flex items-end">
@@ -247,7 +267,7 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
       </section>
 
       {filteredAnimals.length ? (
-        <section className="grid" aria-live="polite">
+        <section className="animal-grid" aria-live="polite">
           {filteredAnimals.map((animal) => (
             <article className="animal-card" key={animal.id}>
               <Image
