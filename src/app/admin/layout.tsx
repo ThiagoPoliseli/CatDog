@@ -3,6 +3,9 @@ import { redirect } from "next/navigation";
 import { logoutAction } from "./actions";
 import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/server";
+import { isAdminUser } from "@/lib/admin";
+
+export const dynamic = "force-dynamic";
 
 export default async function AdminLayout({
   children,
@@ -16,6 +19,10 @@ export default async function AdminLayout({
 
   if (!user) {
     redirect("/entrar?next=/admin");
+  }
+
+  if (!isAdminUser(user)) {
+    redirect("/animais");
   }
 
   return (

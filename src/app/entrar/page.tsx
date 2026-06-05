@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   Eye,
   EyeOff,
@@ -39,14 +39,22 @@ function getSafeNext(value: string | null) {
   return value;
 }
 
+function formatAuthError(message: string) {
+  const normalized = message.toLowerCase();
+
+  if (normalized.includes("confirm")) {
+    return "Esta conta ainda exige confirmacao no Supabase. Crie a conta novamente pela tela de cadastro.";
+  }
+
+  return "E-mail ou senha invalidos. Crie uma conta se ainda nao tiver acesso.";
+}
+
 export default function EntrarPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = useMemo(
     () => getSafeNext(searchParams.get("next")),
     [searchParams],
   );
-  const signup = useMemo(() => searchParams.get("signup"), [searchParams]);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -69,14 +77,11 @@ export default function EntrarPage() {
     setIsSubmitting(false);
 
     if (authError) {
-      setError(
-        "E-mail ou senha invalidos. Crie uma conta se ainda nao tiver acesso.",
-      );
+      setError(formatAuthError(authError.message));
       return;
     }
 
-    router.refresh();
-    router.push(next);
+    window.location.assign(next);
   }
 
   return (
@@ -126,15 +131,6 @@ export default function EntrarPage() {
           {error ? (
             <Alert variant="destructive" className="mb-4">
               <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : null}
-
-          {signup ? (
-            <Alert variant="success" className="mb-4">
-              <AlertDescription>
-                Conta criada! Se não receber o e-mail, verifique sua caixa de
-                spam.
-              </AlertDescription>
             </Alert>
           ) : null}
 

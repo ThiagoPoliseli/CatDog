@@ -5,11 +5,14 @@ import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import { userSignOutAction } from "@/app/entrar/actions";
 import { Button } from "@/components/ui/button";
+import { isAdminUser } from "@/lib/admin";
 
 export const metadata: Metadata = {
   title: "CatDog",
   description: "Plataforma simples para adocao de caes e gatos.",
 };
+
+export const dynamic = "force-dynamic";
 
 export default async function RootLayout({
   children,
@@ -20,6 +23,7 @@ export default async function RootLayout({
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const isAdmin = isAdminUser(user);
 
   return (
     <html lang="pt-BR">
@@ -47,12 +51,14 @@ export default async function RootLayout({
                       Minhas solicitacoes
                     </Link>
                   </Button>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href="/admin">
-                      <Shield size={16} aria-hidden />
-                      Admin
-                    </Link>
-                  </Button>
+                  {isAdmin ? (
+                    <Button asChild variant="ghost" size="sm">
+                      <Link href="/admin">
+                        <Shield size={16} aria-hidden />
+                        Admin
+                      </Link>
+                    </Button>
+                  ) : null}
                   <form action={userSignOutAction}>
                     <Button variant="outline" size="sm" type="submit">
                       Sair

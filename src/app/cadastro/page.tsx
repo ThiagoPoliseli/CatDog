@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import {
   CheckCircle2,
   Eye,
@@ -55,14 +55,12 @@ function extractFields(formData: FormData): SignUpFields {
 }
 
 export default function CadastroPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const next = useMemo(
     () => getSafeNext(searchParams.get("next")),
     [searchParams],
   );
   const [error, setError] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +68,6 @@ export default function CadastroPage() {
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
-    setSuccessMessage("");
 
     const { name, email, password, confirmPassword } = extractFields(
       new FormData(event.currentTarget),
@@ -93,35 +90,33 @@ export default function CadastroPage() {
 
     setIsSubmitting(true);
 
+    const response = await fetch("/api/auth/sign-up", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const result = (await response.json()) as { message?: string };
+
+    if (!response.ok) {
+      setIsSubmitting(false);
+      setError(result.message ?? "Nao foi possivel criar a conta.");
+      return;
+    }
+
     const supabase = createClient();
-    const { data, error: authError } = await supabase.auth.signUp({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
-      options: {
-        data: { name },
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`,
-      },
     });
 
     setIsSubmitting(false);
 
-    if (authError) {
-      setError(authError.message);
+    if (signInError) {
+      setError(signInError.message);
       return;
     }
 
-    if (data.user?.identities?.length === 0) {
-      setError("Este e-mail ja esta cadastrado. Tente fazer login.");
-      return;
-    }
-
-    if (data.session) {
-      router.refresh();
-      router.push(next);
-      return;
-    }
-
-    router.push(`/entrar?signup=1&next=${encodeURIComponent(next)}`);
+    window.location.assign(next);
   }
 
   return (
@@ -171,12 +166,6 @@ export default function CadastroPage() {
           {error ? (
             <Alert variant="destructive" className="mb-4">
               <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          ) : null}
-
-          {successMessage ? (
-            <Alert variant="success" className="mb-4">
-              <AlertDescription>{successMessage}</AlertDescription>
             </Alert>
           ) : null}
 
