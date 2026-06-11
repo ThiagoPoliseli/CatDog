@@ -28,8 +28,8 @@ export default function RedefinirSenhaPage() {
     const supabase = createClient();
     const redirectTo =
       typeof window !== "undefined"
-        ? `${window.location.origin}/auth/callback`
-        : "/auth/callback";
+        ? `${window.location.origin}/auth/callback?next=/nova-senha`
+        : "/auth/callback?next=/nova-senha";
 
     const { error: authError } = await supabase.auth.resetPasswordForEmail(
       email,

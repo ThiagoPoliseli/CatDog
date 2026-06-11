@@ -1,5 +1,28 @@
 import { test, expect } from "@playwright/test";
 
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+async function cleanupE2EData(request: import("@playwright/test").APIRequestContext) {
+  if (!SERVICE_KEY) return;
+  const headers = {
+    Authorization: `Bearer ${SERVICE_KEY}`,
+    apikey: SERVICE_KEY,
+  };
+  await Promise.all([
+    request.delete(`${SUPABASE_URL}/rest/v1/species?name=like.E2E-*`, { headers }),
+    request.delete(`${SUPABASE_URL}/rest/v1/sizes?name=like.E2E-*`, { headers }),
+  ]);
+}
+
+test.beforeAll(async ({ request }) => {
+  await cleanupE2EData(request);
+});
+
+test.afterAll(async ({ request }) => {
+  await cleanupE2EData(request);
+});
+
 function skipIfNoAdmin(page: import("@playwright/test").Page) {
   const { pathname } = new URL(page.url());
   // redireciona para /entrar quando sem auth, ou para /animais se nao for admin
