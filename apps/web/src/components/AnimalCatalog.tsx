@@ -79,6 +79,8 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [phone, setPhone] = useState("");
+  const [housingType, setHousingType] = useState("");
+  const [hasOtherPets, setHasOtherPets] = useState<string>("");
 
   const filteredBreeds = useMemo(() => {
     if (!speciesId) {
@@ -142,6 +144,11 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
       email: String(formData.get("email") ?? ""),
       phone: String(formData.get("phone") ?? ""),
       message: String(formData.get("message") ?? ""),
+      housingType,
+      hasOtherPets: hasOtherPets === "true",
+      adultsCount: Number(formData.get("adultsCount") ?? 1),
+      childrenCount: Number(formData.get("childrenCount") ?? 0),
+      hoursAlonePerDay: Number(formData.get("hoursAlonePerDay") ?? 0),
     };
 
     const response = await fetch("/api/adoption-requests", {
@@ -326,6 +333,8 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
                     setSelectedAnimal(animal);
                     setRequestState({ type: "idle", message: "" });
                     setPhone("");
+                    setHousingType("");
+                    setHasOtherPets("");
                   }}
                   type="button"
                 >
@@ -401,13 +410,82 @@ export function AnimalCatalog({ animals, species, breeds, sizes, user }: Props) 
                   onChange={(e) => setPhone(formatPhone(e.target.value))}
                 />
               </div>
+
+              <div className="grid gap-1.5">
+                <Label>Tipo de moradia</Label>
+                <Select value={housingType} onValueChange={setHousingType} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="Casa">Casa</SelectItem>
+                    <SelectItem value="Apartamento">Apartamento</SelectItem>
+                    <SelectItem value="Sitio/Chacara">Sitio / Chacara</SelectItem>
+                    <SelectItem value="Outro">Outro</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-1.5">
+                <Label>Tem outros animais?</Label>
+                <Select value={hasOtherPets} onValueChange={setHasOtherPets} required>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Selecione..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="false">Nao</SelectItem>
+                    <SelectItem value="true">Sim</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-1.5">
+                <Label htmlFor="adultsCount">Adultos na residencia</Label>
+                <Input
+                  id="adultsCount"
+                  name="adultsCount"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="Ex: 2"
+                  defaultValue={1}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-1.5">
+                <Label htmlFor="childrenCount">Criancas (abaixo de 12 anos)</Label>
+                <Input
+                  id="childrenCount"
+                  name="childrenCount"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="Ex: 0"
+                  defaultValue={0}
+                  required
+                />
+              </div>
+
               <div className="grid gap-1.5 full">
-                <Label htmlFor="message">Mensagem</Label>
+                <Label htmlFor="hoursAlonePerDay">Horas por dia que o animal ficaria sozinho</Label>
+                <Input
+                  id="hoursAlonePerDay"
+                  name="hoursAlonePerDay"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  placeholder="Ex: 4"
+                  defaultValue={0}
+                  required
+                />
+              </div>
+
+              <div className="grid gap-1.5 full">
+                <Label htmlFor="message">Por que voce quer adotar este animal?</Label>
                 <Textarea
                   id="message"
                   name="message"
-                  placeholder="Conte por que voce quer adotar este animal."
+                  placeholder="Conte sua experiencia com animais, rotina, espaco disponivel..."
                   required
+                  rows={4}
                 />
               </div>
               <div className="actions full">

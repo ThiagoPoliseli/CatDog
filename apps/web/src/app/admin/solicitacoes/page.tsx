@@ -1,7 +1,6 @@
 import { listCatalog } from "@/lib/store";
 import { requestStatusLabels } from "@/lib/types";
-import { updateRequestStatusAction } from "../actions";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,8 +9,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { RequestStatusForm } from "./request-status-form";
 
 export const dynamic = "force-dynamic";
+
+const statusVariant: Record<string, "available" | "in_process" | "adopted" | "species" | "cancelled" | "default"> = {
+  received: "default",
+  reviewing: "in_process",
+  documentation: "in_process",
+  interview: "in_process",
+  visit: "in_process",
+  approved: "available",
+  completed: "available",
+  rejected: "cancelled",
+  cancelled: "cancelled",
+};
 
 export default async function AdminRequestsPage() {
   const catalog = await listCatalog();
@@ -33,6 +45,7 @@ export default async function AdminRequestsPage() {
             <TableHeader>
               <TableRow>
                 <TableHead>Interessado</TableHead>
+                <TableHead>Perfil</TableHead>
                 <TableHead>Animal</TableHead>
                 <TableHead>Mensagem</TableHead>
                 <TableHead>Status</TableHead>
@@ -41,9 +54,7 @@ export default async function AdminRequestsPage() {
             </TableHeader>
             <TableBody>
               {catalog.adoptionRequests.map((request) => {
-                const animal = catalog.animals.find(
-                  (item) => item.id === request.animalId,
-                );
+                const animal = catalog.animals.find((a) => a.id === request.animalId);
                 return (
                   <TableRow key={request.id}>
                     <TableCell>
@@ -54,25 +65,33 @@ export default async function AdminRequestsPage() {
                         {request.phone}
                       </p>
                     </TableCell>
-                    <TableCell>{animal?.name ?? "Animal removido"}</TableCell>
-                    <TableCell>{request.message}</TableCell>
-                    <TableCell>{requestStatusLabels[request.status]}</TableCell>
                     <TableCell>
-                      <form action={updateRequestStatusAction} className="actions">
-                        <input name="id" type="hidden" value={request.id} />
-                        <select
-                          className="flex h-11 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
-                          defaultValue={request.status}
-                          name="status"
-                        >
-                          <option value="received">Recebida</option>
-                          <option value="reviewing">Em analise</option>
-                          <option value="approved">Aprovada</option>
-                          <option value="rejected">Recusada</option>
-                          <option value="completed">Concluida</option>
-                        </select>
-                        <Button type="submit">Salvar</Button>
-                      </form>
+                      <div className="grid gap-0.5 text-xs text-muted-foreground">
+                        {request.housingType && (
+                          <span>🏠 {request.housingType}</span>
+                        )}
+                        {request.hasOtherPets !== undefined && (
+                          <span>{request.hasOtherPets ? "🐾 Tem outros animais" : "🐾 Sem outros animais"}</span>
+                        )}
+                        {request.adultsCount !== undefined && (
+                          <span>👥 {request.adultsCount} adulto{request.adultsCount !== 1 ? "s" : ""}{request.childrenCount ? `, ${request.childrenCount} crianca${request.childrenCount !== 1 ? "s" : ""}` : ""}</span>
+                        )}
+                        {request.hoursAlonePerDay !== undefined && (
+                          <span>⏱ {request.hoursAlonePerDay}h sozinho/dia</span>
+                        )}
+                      </div>
+                    </TableCell>
+                    <TableCell>{animal?.name ?? "Animal removido"}</TableCell>
+                    <TableCell className="max-w-48">
+                      <p className="line-clamp-3 text-sm">{request.message}</p>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={statusVariant[request.status] ?? "default"}>
+                        {requestStatusLabels[request.status]}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <RequestStatusForm id={request.id} defaultStatus={request.status} />
                     </TableCell>
                   </TableRow>
                 );

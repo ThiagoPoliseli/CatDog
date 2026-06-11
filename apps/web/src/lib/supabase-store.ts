@@ -52,6 +52,11 @@ type SupabaseAdoptionRequest = {
   status: AdoptionRequest["status"];
   created_at: string;
   user_id?: string;
+  housing_type?: string;
+  has_other_pets?: boolean;
+  adults_count?: number;
+  children_count?: number;
+  hours_alone_per_day?: number;
 };
 
 function getSupabaseUrl() {
@@ -147,6 +152,11 @@ function toAdoptionRequest(row: SupabaseAdoptionRequest): AdoptionRequest {
     status: row.status,
     createdAt: row.created_at,
     userId: row.user_id,
+    housingType: row.housing_type,
+    hasOtherPets: row.has_other_pets,
+    adultsCount: row.adults_count,
+    childrenCount: row.children_count,
+    hoursAlonePerDay: row.hours_alone_per_day,
   };
 }
 
@@ -205,6 +215,11 @@ function fromAdoptionRequest(
     status: request.status,
     created_at: request.createdAt,
     user_id: request.userId,
+    housing_type: request.housingType,
+    has_other_pets: request.hasOtherPets,
+    adults_count: request.adultsCount,
+    children_count: request.childrenCount,
+    hours_alone_per_day: request.hoursAlonePerDay,
   };
 }
 

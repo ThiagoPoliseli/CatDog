@@ -2,6 +2,9 @@ export type AdoptionStatus = "available" | "in_process" | "adopted";
 export type RequestStatus =
   | "received"
   | "reviewing"
+  | "documentation"
+  | "interview"
+  | "visit"
   | "approved"
   | "rejected"
   | "completed"
@@ -52,6 +55,11 @@ export type AdoptionRequest = {
   status: RequestStatus;
   createdAt: string;
   userId?: string;
+  housingType?: string;
+  hasOtherPets?: boolean;
+  adultsCount?: number;
+  childrenCount?: number;
+  hoursAlonePerDay?: number;
 };
 
 export type CatDogDatabase = {
@@ -77,6 +85,9 @@ export const adoptionStatusLabels: Record<AdoptionStatus, string> = {
 export const requestStatusLabels: Record<RequestStatus, string> = {
   received: "Recebida",
   reviewing: "Em analise",
+  documentation: "Documentacao",
+  interview: "Entrevista",
+  visit: "Visita",
   approved: "Aprovada",
   rejected: "Recusada",
   completed: "Concluida",

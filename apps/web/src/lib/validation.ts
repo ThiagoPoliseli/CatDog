@@ -39,10 +39,19 @@ export const adoptionRequestSchema = z.object({
       "Informe o telefone no formato (XX) XXXX-XXXX.",
     ),
   message: z.string().trim().min(10, "Conte um pouco sobre seu interesse."),
+  housingType: z.string().trim().min(1, "Selecione o tipo de moradia."),
+  hasOtherPets: z.boolean(),
+  adultsCount: z.coerce.number().int().min(1, "Informe ao menos 1 adulto.").max(20),
+  childrenCount: z.coerce.number().int().min(0).max(20),
+  hoursAlonePerDay: z.coerce.number().int().min(0).max(24),
 });
 
 export const requestStatusSchema = z.object({
-  status: z.enum(["received", "reviewing", "approved", "rejected", "completed"]),
+  status: z.enum([
+    "received", "reviewing",
+    "documentation", "interview", "visit",
+    "approved", "rejected", "completed",
+  ]),
 });
 
 export function slugify(value: string) {
