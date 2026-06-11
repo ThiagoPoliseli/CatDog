@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ClipboardList, LogIn, PawPrint, Shield, UserPlus } from "lucide-react";
+import { ClipboardList, LogIn, PawPrint, Shield, UserCircle, UserPlus } from "lucide-react";
 import "./globals.css";
 import { createClient } from "@/lib/supabase/server";
 import { userSignOutAction } from "@/app/entrar/actions";
@@ -58,6 +58,12 @@ export default async function RootLayout({
                     <Link href="/minhas-solicitacoes">
                       <ClipboardList size={16} aria-hidden />
                       Minhas solicitacoes
+                    </Link>
+                  </Button>
+                  <Button asChild variant="ghost" size="sm">
+                    <Link href="/perfil">
+                      <UserCircle size={16} aria-hidden />
+                      Meu perfil
                     </Link>
                   </Button>
                   {isAdmin ? (

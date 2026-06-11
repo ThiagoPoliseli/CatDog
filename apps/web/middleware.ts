@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { type NextRequest, NextResponse } from "next/server";
 
-const PROTECTED = ["/minhas-solicitacoes", "/admin"];
+const PROTECTED = ["/minhas-solicitacoes", "/admin", "/perfil"];
 const AUTH_PAGES = ["/entrar", "/cadastro", "/login"];
 
 function redirectToLogin(request: NextRequest) {
