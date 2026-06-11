@@ -40,7 +40,7 @@ create table if not exists adoption_requests (
   phone text not null,
   message text not null,
   status text not null check (
-    status in ('received', 'reviewing', 'approved', 'rejected', 'completed')
+    status in ('received', 'reviewing', 'approved', 'rejected', 'completed', 'cancelled')
   ),
   created_at timestamptz not null default now()
 );

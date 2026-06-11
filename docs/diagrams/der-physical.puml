@@ -55,6 +55,7 @@ entity ADOPTION_REQUEST {
   *ID_ADOPTION_REQUEST : TEXT <<PK>>
   --
   #ID_ANIMAL : TEXT <<FK>>
+  #ID_USER : UUID <<FK, nullable>>
   NM_ADOPTER : TEXT
   NM_EMAIL : TEXT
   NM_PHONE : TEXT
@@ -63,10 +64,24 @@ entity ADOPTION_REQUEST {
   DTH_CREATED_AT : TIMESTAMP
 }
 
+entity USER_AUTH <<auth.users>> {
+  *ID_USER : UUID <<PK>>
+  --
+  NM_EMAIL : TEXT
+  NM_NAME : TEXT (user_metadata)
+}
+
+note right of USER_AUTH
+  Tabela gerenciada pelo Supabase Auth.
+  Não pertence ao schema público do CatDog.
+  Adicionada via supabase/add-user-auth.sql
+end note
+
 SPECIES ||--|{ BREED : "has"
 SPECIES ||--o{ ANIMAL : "categorizes"
 BREED ||--o{ ANIMAL : "classifies"
 SIZE ||--o{ ANIMAL : "sizes"
 ANIMAL ||--o{ ADOPTION_REQUEST : "receives"
+USER_AUTH ||--o{ ADOPTION_REQUEST : "owns"
 
 @enduml

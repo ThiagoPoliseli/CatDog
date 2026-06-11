@@ -10,3 +10,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 *.tsbuildinfo
+.turbo/
+apps/web/.playwright/
+playwright-report/
+test-results/
+.nyc_output/
+coverage/

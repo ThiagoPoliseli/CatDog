@@ -32,11 +32,17 @@ Implementada por uma camada em `src/lib/store.ts`, que delega leitura e escrita 
 ## Principais Modulos ou Pastas Identificadas
 
 - `src/app/animais`: catalogo publico de animais.
-- `src/app/admin`: area administrativa.
-- `src/app/api/adoption-requests`: API para solicitacoes de adocao.
+- `src/app/admin`: area administrativa (CRUD de animais, especies, racas, portes e solicitacoes).
+- `src/app/entrar`, `src/app/cadastro`, `src/app/redefinir-senha`: paginas de autenticacao.
+- `src/app/minhas-solicitacoes`: pagina do usuario para acompanhar seus pedidos de adocao.
+- `src/app/api/adoption-requests`: API para registrar solicitacoes de adocao.
+- `src/app/api/auth/sign-up`: API para criacao de conta sem confirmacao de e-mail.
+- `src/app/auth/callback`: callback OAuth do Supabase.
+- `middleware.ts`: protecao de rotas via Supabase Auth (SSR).
 - `src/components`: componentes reutilizaveis de catalogo e formularios.
-- `src/lib`: tipos, validacoes, autenticacao simples e persistencia Supabase.
+- `src/lib`: tipos, validacoes, guard de admin e persistencia Supabase.
 - `supabase/schema.sql`: schema do banco Supabase.
+- `supabase/add-user-auth.sql`: migracao que adiciona user_id na tabela adoption_requests.
 - `supabase/seed.sql`: dados iniciais para Supabase.
 - `docs/context`: documentos de contexto do produto CatDog.
 
@@ -50,7 +56,7 @@ Implementada por uma camada em `src/lib/store.ts`, que delega leitura e escrita 
 ## Observacoes Sobre Arquitetura Atual
 
 - A arquitetura atual e monolitica em Next.js, suficiente para a primeira versao local.
-- A autenticacao administrativa e simples, baseada em cookie e credenciais de ambiente.
+- A autenticacao e feita via Supabase Auth (JWT armazenado em cookies SSR). O acesso admin e controlado por lista de e-mails em `ADMIN_EMAIL` (env), verificada em `src/lib/admin.ts`.
 - Supabase e a fonte unica de dados nesta versao; sem credenciais validas, a aplicacao nao carrega o catalogo.
 - O schema do Supabase inclui triggers para bloquear solicitacoes de animais adotados e mover animais disponiveis para `in_process` quando uma solicitacao e criada.
 - O init do Makuco foi mapeado em script, mas o pacote retornou `403 Forbidden` sem acesso autenticado.

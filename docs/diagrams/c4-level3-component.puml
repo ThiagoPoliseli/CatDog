@@ -4,33 +4,79 @@
 
 title CatDog - C4 Component (Nível 3) — Next.js Server
 
+Person_Ext(adopter, "Adotante")
+Person_Ext(admin_user, "Administrador")
 Container_Ext(webapp, "Next.js Web App", "React / TypeScript", "Browser")
-ContainerDb_Ext(supabase, "Supabase", "PostgreSQL", "Banco de dados externo")
+ContainerDb_Ext(supabase_db, "Supabase PostgreSQL", "PostgreSQL", "Banco de dados externo")
+System_Ext(supabase_auth_ext, "Supabase Auth", "JWT + Cookies", "Serviço de autenticação")
 
 Container_Boundary(server, "Next.js Server") {
-  Component(catalogo, "Catalogo Page", "Next.js RSC", "src/app/animais/page.tsx\nLista animais disponíveis para adoção")
-  Component(admin_pages, "Admin Pages", "Next.js RSC + Server Actions", "src/app/admin/\nCRUD de animais, espécies, raças, portes e solicitações")
-  Component(api_route, "Adoption Request API", "Next.js API Route", "src/app/api/adoption-requests/route.ts\nRegistra solicitações via HTTP POST")
-  Component(auth, "Auth", "TypeScript", "src/lib/auth.ts\nAutenticação simples por cookie para área admin")
-  Component(validators, "Validators", "Zod", "src/lib/\nValidações de entradas e formulários")
-  Component(store, "Store", "TypeScript", "src/lib/store.ts\nFachada de persistência independente de implementação")
-  Component(supabase_store, "Supabase Store", "supabase-js SDK", "src/lib/supabase-store.ts\nImplementação concreta da persistência com Supabase")
+
+  Component(middleware, "Middleware", "Next.js Edge Middleware", "middleware.ts\nProtege rotas /animais, /admin, /minhas-solicitacoes\nRedireciona para /entrar se não autenticado")
+
+  Component(catalogo, "Catálogo Page", "Next.js RSC", "src/app/animais/page.tsx\nLista animais disponíveis para adoção com filtros")
+
+  Component(minhas_solicitacoes, "Minhas Solicitações Page", "Next.js RSC", "src/app/minhas-solicitacoes/page.tsx\nExibe solicitações do usuário autenticado")
+
+  Component(auth_pages, "Páginas de Autenticação", "Next.js Client + Server Action", "src/app/entrar/ · src/app/cadastro/\nsrc/app/redefinir-senha/\nLogin, cadastro e recuperação de senha via Supabase Auth")
+
+  Component(auth_callback, "Auth Callback Route", "Next.js API Route", "src/app/auth/callback/route.ts\nTraca código OAuth do Supabase por sessão")
+
+  Component(admin_pages, "Admin Pages", "Next.js RSC + Server Actions", "src/app/admin/\nCRUD de animais, espécies, raças, portes\nGestão de solicitações de adoção")
+
+  Component(api_adoption, "Adoption Request API", "Next.js API Route", "src/app/api/adoption-requests/route.ts\nRegistra solicitações de adoção via HTTP POST")
+
+  Component(api_signup, "Sign-up API", "Next.js API Route", "src/app/api/auth/sign-up/route.ts\nCria usuário no Supabase sem confirmação de e-mail")
+
+  Component(supabase_clients, "Supabase Clients", "supabase-js / @supabase/ssr", "src/lib/supabase/server.ts · src/lib/supabase/client.ts\nClientes SSR (server) e browser para Supabase Auth")
+
+  Component(admin_guard, "Admin Guard", "TypeScript", "src/lib/admin.ts\nVerifica se o usuário autenticado é administrador\npor e-mail configurado em ADMIN_EMAIL")
+
+  Component(validators, "Validators", "Zod", "src/lib/validation.ts\nEsquemas de validação para animais, solicitações e formulários")
+
+  Component(store, "Store", "TypeScript", "src/lib/store.ts\nFachada de negócio: geração de IDs, validações de integridade\ne delegação para a camada Supabase")
+
+  Component(supabase_store, "Supabase Store", "supabase-js SDK", "src/lib/supabase-store.ts\nImplementação concreta de persistência no Supabase.\nOperações de escrita exigem SUPABASE_SERVICE_ROLE_KEY")
 }
 
-Rel(webapp, catalogo, "GET /animais", "RSC fetch")
-Rel(webapp, admin_pages, "GET/POST /admin", "RSC + Server Actions")
-Rel(webapp, api_route, "POST /api/adoption-requests", "HTTP")
+Rel(adopter, webapp, "Navega catálogo, solicita adoção")
+Rel(admin_user, webapp, "Gerencia dados e solicitações")
 
-Rel(admin_pages, auth, "Verifica cookie de autenticação")
-Rel(admin_pages, store, "Consulta e persiste dados de animais")
+Rel(webapp, middleware, "Toda requisição passa pelo middleware")
+Rel(middleware, supabase_clients, "Verifica sessão do usuário")
+
+Rel(webapp, catalogo, "GET /animais")
+Rel(webapp, minhas_solicitacoes, "GET /minhas-solicitacoes")
+Rel(webapp, auth_pages, "GET/POST /entrar, /cadastro, /redefinir-senha")
+Rel(webapp, auth_callback, "GET /auth/callback")
+Rel(webapp, admin_pages, "GET/POST /admin/**")
+Rel(webapp, api_adoption, "POST /api/adoption-requests")
+Rel(webapp, api_signup, "POST /api/auth/sign-up")
+
+Rel(admin_pages, supabase_clients, "Obtém usuário autenticado")
+Rel(admin_pages, admin_guard, "Verifica se usuário é administrador")
+Rel(admin_pages, store, "Consulta e persiste dados")
 Rel(admin_pages, validators, "Valida dados de entrada")
 
-Rel(catalogo, store, "Consulta animais disponíveis")
+Rel(catalogo, store, "Consulta animais, espécies, raças e portes")
+Rel(catalogo, supabase_clients, "Obtém usuário autenticado")
 
-Rel(api_route, validators, "Valida payload da solicitação")
-Rel(api_route, store, "Persiste solicitação de adoção")
+Rel(minhas_solicitacoes, store, "Lista solicitações do usuário")
+Rel(minhas_solicitacoes, supabase_clients, "Obtém usuário autenticado")
+
+Rel(api_adoption, validators, "Valida payload da solicitação")
+Rel(api_adoption, store, "Persiste solicitação de adoção")
+Rel(api_adoption, supabase_clients, "Verifica autenticação do usuário")
+
+Rel(api_signup, validators, "Valida dados de cadastro")
+Rel(api_signup, admin_guard, "Bloqueia e-mails reservados para admin")
+Rel(api_signup, supabase_auth_ext, "Cria usuário via Admin API", "service_role key")
+
+Rel(auth_pages, supabase_clients, "Login, logout e recuperação de senha")
+Rel(auth_callback, supabase_clients, "Troca código por sessão")
 
 Rel(store, supabase_store, "Delega operações de persistência")
-Rel(supabase_store, supabase, "Executa queries SQL", "supabase-js SDK")
+Rel(supabase_store, supabase_db, "Executa queries SQL", "supabase-js SDK")
+Rel(supabase_clients, supabase_auth_ext, "Gerencia sessões JWT", "supabase-js SDK")
 
 @enduml

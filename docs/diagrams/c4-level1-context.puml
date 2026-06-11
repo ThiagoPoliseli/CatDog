@@ -12,7 +12,7 @@ System(catdog, "CatDog", "Plataforma web de adoção de cães e gatos")
 System_Ext(supabase, "Supabase", "Backend-as-a-Service: PostgreSQL, autenticação e storage")
 
 Rel(adopter, catdog, "Navega catálogo e envia solicitações de adoção", "HTTPS")
-Rel(admin, catdog, "Gerencia animais e solicitações", "HTTPS + cookie auth")
+Rel(admin, catdog, "Gerencia animais e solicitações", "HTTPS + Supabase Auth")
 Rel(catdog, supabase, "Persiste e consulta dados", "supabase-js SDK")
 
 @enduml
